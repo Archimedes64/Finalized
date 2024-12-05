@@ -4,7 +4,7 @@ import argparse
 import json
 from rich.console import Console
 console = Console()
-
+DESCRIPTION_NEWLINE_INTERVAL = 7
 PATH = 'topylist/saves'
 def clear_screen():
     # For Windows
@@ -70,8 +70,18 @@ def tasks_screen():
     clear_screen()
     save = load_todos()
     console.print("[bold red]Tasks: [/bold red]")
+    
     for task in save['tasks']['todo']:
-        console.print(f"[bold]Title: {task['title']}\n  Description:\n [/bold]    {task['details']}\n[bold]  due-date: [/bold][green]{task['due_date']}[/green]")
+        details = task['details']
+        
+        details = details.split()
+        length = len(details)
+        for i in range(0,length-4,DESCRIPTION_NEWLINE_INTERVAL):
+            if i ==0:
+                continue
+            details.insert(i+i//DESCRIPTION_NEWLINE_INTERVAL,'\n    ')
+        details = " ".join(details)
+        console.print(f"\n[bold]Title: {task['title']}\n  Description:\n [/bold]    {details}\n[bold]  due-date: [/bold][green]{task['due_date']}[/green]")
 def Finish_Mode():
     
     save = load_todos()
