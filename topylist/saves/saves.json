@@ -3,32 +3,77 @@
           "all": {
                "tasks": {
                     "todo": [],
-                    "done": []
+                    "done": [
+                         {
+                              "title": "",
+                              "details": "",
+                              "due_date": "2024/12/20",
+                              "goal": "misc"
+                         },
+                         {
+                              "title": "title",
+                              "details": "description",
+                              "due_date": "2024/12/10",
+                              "goal": "misc"
+                         }
+                    ]
                },
                "details": "every task"
           },
           "misc": {
                "tasks": {
-                    "todo": [],
-                    "done": []
+                    "todo": [
+                         {
+                              "title": "title",
+                              "details": "description",
+                              "due_date": "2024/12/10",
+                              "goal": "misc"
+                         },
+                         {
+                              "title": "",
+                              "details": "",
+                              "due_date": "2024/12/20"
+                         }
+                    ],
+                    "done": [
+                         {
+                              "title": "",
+                              "details": "",
+                              "due_date": "2024/12/20",
+                              "goal": "misc"
+                         },
+                         {
+                              "title": "title",
+                              "details": "description",
+                              "due_date": "2024/12/10",
+                              "goal": "misc"
+                         }
+                    ]
                },
                "details": "tasks that have no goal"
           },
-          "finish_topylist": {
+          "goal1": {
                "tasks": {
                     "todo": [],
                     "done": []
                },
-               "details": "Tasks related to finish_topylist"
+               "details": "Tasks related to goal1"
           },
-          "be-healthy": {
+          "goal2": {
                "tasks": {
                     "todo": [],
                     "done": []
                },
-               "details": "Tasks related to be-healthy"
+               "details": "Tasks related to goal2"
+          },
+          "goal3": {
+               "tasks": {
+                    "todo": [],
+                    "done": []
+               },
+               "details": "Tasks related to goal3"
           }
      },
      "name": "Connor",
-     "tasks_done": 0
+     "tasks_done": 2
 }

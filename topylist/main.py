@@ -27,7 +27,7 @@ def main():
         elif user_input == 'finish':
             tpl.clear_screen()
             tpl.console.print('[bold red]Finish[/bold red]\n [green]Tasks:[/green]')
-            tpl.Finish_Mode()
+            tpl.Finish_Mode(goal)
             tpl.finish_task(input('Task Tile:'))
         elif any(task['title'] == user_input for task in saves['goals'][goal]['tasks']['todo']):
                 tpl.clear_screen()

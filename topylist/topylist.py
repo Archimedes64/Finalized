@@ -82,7 +82,7 @@ def write_todo(title,task,due_date):
         return
 
     save['goals'][goal]['tasks']['todo'].append({'title':title, 'details':task,'due_date':due_date})
-    save['goals']['all']['tasks']['todo'].append({'title':title, 'details':task,'due_date':due_date})
+    save['goals']['all']['tasks']['todo'].append({'title':title, 'details':task,'due_date':due_date,'goal':goal})
 
     with open(PATH + '/saves.json','w') as f:
         json.dump(save,f,indent=5)
@@ -91,15 +91,16 @@ def write_todo(title,task,due_date):
 def finish_task(task_title):
     
     save = load_todos()
-    for task_id, tasks in enumerate(save['tasks']['todo']):
+    for task_id, tasks in enumerate(save['goals']['all']['tasks']['todo']):
         if tasks['title'] == task_title:
-            task = save['tasks']['todo'][task_id]
-            del(save['tasks']['todo'][task_id])
+            task = save['goals']['all']['tasks']['todo'][task_id]
+            del(save['goals']['all']['tasks']['todo'][task_id])
             break
     else:
-        print('No task with title: '+task_title)
+        print('No task with title: '+ task_title)
         return
-    save['tasks']['done'].append(task)
+    save['goals']['all']['tasks']['done'].append(task)
+    save['goals'][task['goal']]['tasks']['done'].append(task)
     save['tasks_done'] += 1 
     with open(PATH + '/saves.json','w') as f:
         json.dump(save,f,indent=5)
@@ -126,43 +127,12 @@ def tasks_screen(goal):
             details.insert(i+i//DESCRIPTION_NEWLINE_INTERVAL,'\n    ')
         details = " ".join(details)
         console.print(f"\n[bold]Title: {task['title']}\n  Description:\n [/bold]    {details}\n[bold]  due-date: [/bold][green]{task['due_date']}[/green]")
-def Finish_Mode():
+def Finish_Mode(goal):
     
     save = load_todos()
-    for task in save['tasks']['todo']:
+    for task in save['goals'][goal]['tasks']['todo']:
         console.print(f'[bold]   {task['title']}[bold]')
 def has_saves():
     if not os.path.exists('topylist/saves/saves.json'):  
         init_saves()
-def main():
-    
 
-
-
-
-
-
-
-
-    argparser.add_argument('-a','--add',action='store_true')
-    argparser.add_argument('-l','--list',action='store_true')
-    argparser.add_argument('-f','--finish',action='store_true')
-    argparser.add_argument('-lf','--list_finished',action='store_true')
-    argparser.add_argument('--reset',action='store_true')
-    
-    args  = argparser.parse_args()
-    if args.add:
-        title = input("Enter task title: ")
-        description = input("Task Description: ")
-        write_todo(description,title)
-    elif args.list:
-        tasks_screen()
-    elif args.list_finished:
-        pass
-    elif args.finish:
-        finish_task(task_title=input("Task title you finished: "))
-    elif args.reset:
-        init_saves()
-
-if __name__ == '__main__':
-    main()
