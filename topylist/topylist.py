@@ -22,27 +22,70 @@ def load_todos():
 def init_saves():
     os.makedirs(PATH,exist_ok=True)
     name = input('whats your name?: ')
-    data = {
-        'tasks': {'todo': [], 'done': []},
-        'name': name,
-        'tasks_done': 0
+    user_goals = input('What goals do you have that you want to do\nthink of goals like long term tasks that you do tasks to complete\nEnter your goals ex:goal1 goal2 goal3: ')
+    user_goals = user_goals.lower().split()
+    tasks = {
+        'todo':[],
+        'done':[]
     }
+    goals = {  
+    'all':{
+        'tasks': tasks,
+        'details':"every task"
+    },
+    'misc':{
+        'tasks': tasks,
+        'details':"tasks that have no goal"
+    },
+    }
+    for goal in user_goals:
+        details = f"Tasks related to {goal}"
+        while True:    
+
+            user_input = input(f'Do you want to write your own description for goal:  {goal}?(y,n): ')
+            if user_input.lower() == 'y':
+                details = input(f'Enter your description for {goal}: ')
+                break
+            elif user_input.lower() == 'n':
+                print('Ok using default description')
+                break
+        goals[goal] = {
+        'tasks': tasks,
+        'details': details
+    }
+    print(goals)
+    data = {
+        'goals': goals,
+        'name': name,
+        'tasks_done': 0,
+        
+    }
+    print(data)
     with open(PATH +'/saves.json','w') as f:
-        json.dump(data,f)
+        json.dump(data,f,indent=5)
 
 def write_todo(title,task,due_date):
     save = load_todos()
+    while True:
+        goal = input("Goal this is under [leave blank if no goal]: ")
+        if goal == '':
+            goal = "misc"
+        elif goal not in list(save['goals']):
+            print('not a goal you have made')
+            continue
+        break
     print(type(save))
-    if any(task['title'] == title for task in save['tasks']['todo']):
+    if any(task['title'] == title for task in save['goals'][goal]['tasks']['todo']):
         clear_screen()
         print('Already a task with that title')
         useless = input(": ")
         return
 
-    save['tasks']['todo'].append({'title':title, 'details':task,'due_date':due_date})
-    print(save)
+    save['goals'][goal]['tasks']['todo'].append({'title':title, 'details':task,'due_date':due_date})
+    save['goals']['all']['tasks']['todo'].append({'title':title, 'details':task,'due_date':due_date})
+
     with open(PATH + '/saves.json','w') as f:
-        json.dump(save,f)
+        json.dump(save,f,indent=5)
 
 
 def finish_task(task_title):
@@ -59,19 +102,20 @@ def finish_task(task_title):
     save['tasks']['done'].append(task)
     save['tasks_done'] += 1 
     with open(PATH + '/saves.json','w') as f:
-        json.dump(save,f)
+        json.dump(save,f,indent=5)
 def clear_finished_tasks():
     save = load_todos()
     save['tasks_done'] = 0
     save['tasks']['done'] = []
     with open(PATH + '/saves.json','w') as f:
-        json.dump(save,f)
-def tasks_screen():
+        json.dump(save,f,indent=5)
+def tasks_screen(goal):
     clear_screen()
     save = load_todos()
-    console.print("[bold red]Tasks: [/bold red]")
+    console.print(f"[bold red] \t{"\t".join((list(save['goals']))).upper()} [/bold red]")
+    console.print(f"[bold yellow] {goal.upper()}: [/bold yellow]")
     
-    for task in save['tasks']['todo']:
+    for task in save['goals'][goal]['tasks']['todo']:
         details = task['details']
         
         details = details.split()

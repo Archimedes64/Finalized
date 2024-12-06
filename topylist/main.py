@@ -12,11 +12,11 @@ def get_due_date() -> str:
     return "".join(date)
 def main():
     tpl.has_saves()
-
+    goal = 'all'
     while True:
         saves = tpl.load_todos()
-        tpl.tasks_screen()
-        user_input = input(":")
+        tpl.tasks_screen(goal)
+        user_input = input("\n:")
         if user_input == 'exit':
             print('Goodbye')
             break
@@ -29,6 +29,11 @@ def main():
             tpl.console.print('[bold red]Finish[/bold red]\n [green]Tasks:[/green]')
             tpl.Finish_Mode()
             tpl.finish_task(input('Task Tile:'))
+        elif any(task['title'] == user_input for task in saves['goals'][goal]['tasks']['todo']):
+                tpl.clear_screen()
+        elif user_input.lower() in list(saves['goals']):
+            goal = user_input.lower()
         else:
+            
             print("Invalid input")
 main()
