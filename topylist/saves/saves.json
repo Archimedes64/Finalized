@@ -5,15 +5,15 @@
                     "todo": [],
                     "done": [
                          {
-                              "title": "",
-                              "details": "",
-                              "due_date": "2024/12/20",
-                              "goal": "misc"
+                              "title": "task",
+                              "details": "task task task task task task task task",
+                              "due_date": "2024/12/01",
+                              "goal": "goal1"
                          },
                          {
                               "title": "title",
-                              "details": "description",
-                              "due_date": "2024/12/10",
+                              "details": "description description description description i i i i ii  i i ii  i",
+                              "due_date": "2024/12/07",
                               "goal": "misc"
                          }
                     ]
@@ -22,30 +22,12 @@
           },
           "misc": {
                "tasks": {
-                    "todo": [
-                         {
-                              "title": "title",
-                              "details": "description",
-                              "due_date": "2024/12/10",
-                              "goal": "misc"
-                         },
-                         {
-                              "title": "",
-                              "details": "",
-                              "due_date": "2024/12/20"
-                         }
-                    ],
+                    "todo": [],
                     "done": [
                          {
-                              "title": "",
-                              "details": "",
-                              "due_date": "2024/12/20",
-                              "goal": "misc"
-                         },
-                         {
                               "title": "title",
-                              "details": "description",
-                              "due_date": "2024/12/10",
+                              "details": "description description description description i i i i ii  i i ii  i",
+                              "due_date": "2024/12/07",
                               "goal": "misc"
                          }
                     ]
@@ -55,23 +37,16 @@
           "goal1": {
                "tasks": {
                     "todo": [],
-                    "done": []
+                    "done": [
+                         {
+                              "title": "task",
+                              "details": "task task task task task task task task",
+                              "due_date": "2024/12/01",
+                              "goal": "goal1"
+                         }
+                    ]
                },
                "details": "Tasks related to goal1"
-          },
-          "goal2": {
-               "tasks": {
-                    "todo": [],
-                    "done": []
-               },
-               "details": "Tasks related to goal2"
-          },
-          "goal3": {
-               "tasks": {
-                    "todo": [],
-                    "done": []
-               },
-               "details": "Tasks related to goal3"
           }
      },
      "name": "Connor",

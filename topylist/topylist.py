@@ -95,12 +95,15 @@ def finish_task(task_title):
         if tasks['title'] == task_title:
             task = save['goals']['all']['tasks']['todo'][task_id]
             del(save['goals']['all']['tasks']['todo'][task_id])
+            del(save['goals'][task['goal']]['tasks']['todo'][task_id])
             break
     else:
         print('No task with title: '+ task_title)
         return
+    
     save['goals']['all']['tasks']['done'].append(task)
     save['goals'][task['goal']]['tasks']['done'].append(task)
+    print(save)
     save['tasks_done'] += 1 
     with open(PATH + '/saves.json','w') as f:
         json.dump(save,f,indent=5)
