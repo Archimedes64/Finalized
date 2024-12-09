@@ -6,6 +6,24 @@ from rich.console import Console
 console = Console()
 DESCRIPTION_NEWLINE_INTERVAL = 7
 PATH = 'topylist/saves'
+def check_length(checked_type,the_checked,length):
+    if len(the_checked) > length:
+        return [False,f'{checked_type} must be longer than {length} charecters']
+    return [True]
+def validate_goal(goal):
+    save = load_todos()
+    if not check_length("Goals",goal,4)[0]:
+        return check_length("goals",goal,4)
+    elif goal in save['goals']:
+        return [False,"Goal already exsists"]
+    return [True]
+def validate_task(task):
+    save = load_todos()
+    if not check_length("Task",task,4)[0]:
+        return check_length("tasks",task,4)
+    elif any(task['title'] == task for task in save['goals']['all']['tasks']['todo']):
+        return [False,"Task already exsists"]
+    return [True]
 def clear_screen():
     # For Windows
     if os.name == 'nt':
@@ -18,7 +36,9 @@ argparser= argparse.ArgumentParser(description='A simple todo list program')
 def load_todos():
     with open(PATH + '/saves.json','r') as f:
         return json.load(f)
-
+def save_data(data):
+    with open(PATH + '/saves.json','w') as f:
+        return json.dump(data, f,indent=5)
 def init_saves():
     os.makedirs(PATH,exist_ok=True)
     name = input('whats your name?: ')
@@ -60,11 +80,34 @@ def init_saves():
         'tasks_done': 0,
         
     }
-    print(data)
-    with open(PATH +'/saves.json','w') as f:
-        json.dump(data,f,indent=5)
-
-def write_todo(title,task,due_date):
+    save_data(data)
+def user_authenication(prompt):
+    while True:
+        user_input =input(prompt+'(y/n): ')
+        if user_input.lower() in ['y','n']:
+            if user_input.lower() == 'n':
+                return False
+            return True
+        print('Not valid input')
+def add_goal():
+    goal_name = input("Name of goal: ").lower()
+    check = validate_goal(goal_name)
+    while not  check[0]:
+        print(check[1])
+        goal_name = input("Name of goal: ").lower()
+        check = validate_goal(goal_name)
+    save = load_todos()
+    save['goals'][goal_name] = {'todo':[],'done':[]}
+    save_data(save)
+    
+def write_todo(due_date):
+    title = input("Task title: ")
+    check = validate_task(title)
+    while not check[0]:
+        print(check[1])
+        title = input("Task title: ")
+        check = validate_task(title)
+    task = input(f"{title} details: ")
     save = load_todos()
     while True:
         goal = input("Goal this is under [leave blank if no goal]: ")
@@ -84,8 +127,8 @@ def write_todo(title,task,due_date):
     save['goals'][goal]['tasks']['todo'].append({'title':title, 'details':task,'due_date':due_date})
     save['goals']['all']['tasks']['todo'].append({'title':title, 'details':task,'due_date':due_date,'goal':goal})
 
-    with open(PATH + '/saves.json','w') as f:
-        json.dump(save,f,indent=5)
+    save_data(save)
+    
 
 
 def finish_task(task_title):
@@ -105,14 +148,12 @@ def finish_task(task_title):
     save['goals'][task['goal']]['tasks']['done'].append(task)
     print(save)
     save['tasks_done'] += 1 
-    with open(PATH + '/saves.json','w') as f:
-        json.dump(save,f,indent=5)
+    save_data(save)
 def clear_finished_tasks():
     save = load_todos()
     save['tasks_done'] = 0
     save['tasks']['done'] = []
-    with open(PATH + '/saves.json','w') as f:
-        json.dump(save,f,indent=5)
+    save_data(save)
 def tasks_screen(goal):
     clear_screen()
     save = load_todos()
@@ -131,7 +172,6 @@ def tasks_screen(goal):
         details = " ".join(details)
         console.print(f"\n[bold]Title: {task['title']}\n  Description:\n [/bold]    {details}\n[bold]  due-date: [/bold][green]{task['due_date']}[/green]")
 def Finish_Mode(goal):
-    
     save = load_todos()
     for task in save['goals'][goal]['tasks']['todo']:
         console.print(f'[bold]   {task['title']}[bold]')

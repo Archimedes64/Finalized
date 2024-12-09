@@ -47,6 +47,14 @@
                     ]
                },
                "details": "Tasks related to goal1"
+          },
+          "Goal": {
+               "todo": [],
+               "done": []
+          },
+          "goal": {
+               "todo": [],
+               "done": []
           }
      },
      "name": "Connor",

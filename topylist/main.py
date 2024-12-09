@@ -7,7 +7,11 @@ def get_due_date() -> str:
         print(len(date))
         if len(date) == 10:
             if date[4] == '/' and date[7] == '/':
-                break
+                if int(date[5:7]) < 12:
+                    if int(date[:4] >= 2024):
+                        break
+            
+
         print('Not a valid date')
     return "".join(date)
 def main():
@@ -23,7 +27,15 @@ def main():
         elif user_input == 'add':
             tpl.clear_screen()
             tpl.console.print("[bold red]Add[/bold red]")
-            tpl.write_todo(input(" Title: "),input(" Description: "),get_due_date())
+            while True:    
+                user_input_add = input("What do you want to add?\n  Goal = 1\n  Task = 2\n  subtask = 3\n\n: ")
+                if user_input_add not in ['1','2','3']:
+                    print("Not a valid input please enter a number 1-3")
+                break
+            if user_input_add == "1":
+                tpl.add_goal()
+            elif user_input_add == "2":
+                tpl.write_todo(get_due_date())
         elif user_input == 'finish':
             tpl.clear_screen()
             tpl.console.print('[bold red]Finish[/bold red]\n [green]Tasks:[/green]')
