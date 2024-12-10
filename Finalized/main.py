@@ -3,7 +3,7 @@ import logic as l
 def main():
     l.has_saves()
     goal = 'all'
-    
+    sort_type = ('due_date',False)
     while True:
         saves = l.load_todos()
         l.tasks_screen(goal)
@@ -36,7 +36,8 @@ def main():
         
         elif any(task['title'] == user_input for task in saves['goals'][goal]['tasks']['todo']):
                 l.clear_screen()
-        
+        elif user_input == "sort":
+            pass
         elif user_input.lower() in list(saves['goals']): 
             goal = user_input.lower()
         else:
