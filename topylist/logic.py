@@ -89,12 +89,16 @@ def get_user_confirmation(prompt):
 def add_goal():
     goal_name = input("Name of goal: ").lower()
     check = validate_goal(goal_name)
+    details = get_goal_details(goal_name)
     while not  check[0]:
         print(check[1])
         goal_name = input("Name of goal: ").lower()
         check = validate_goal(goal_name)
     save = load_todos()
-    save['goals'][goal_name] = {'todo':[],'done':[]}
+    save['goals'][goal_name] = {
+        'tasks': {'todo': [],'done':[]},
+        'details': details
+    }
     save_data(save)
     
 def write_todo(due_date):
