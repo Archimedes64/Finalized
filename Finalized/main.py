@@ -6,7 +6,7 @@ def main():
     sort_type = ('due_date',False)
     while True:
         saves = l.load_todos()
-        l.tasks_screen(goal)
+        l.tasks_screen(goal,sort_type)
         user_input = input("\n:")
         
         if user_input == 'exit':
@@ -37,7 +37,19 @@ def main():
         elif any(task['title'] == user_input for task in saves['goals'][goal]['tasks']['todo']):
                 l.clear_screen()
         elif user_input == "sort":
-            pass
+            
+            while True:    
+                user_input_sort = input("sort type:\n1 = Due Date\n2 = Priority\n:")
+                if user_input_sort not in ['1','2']:
+                    print("Not a valid input please enter a number 1-2")
+                break
+
+            if user_input_sort == '1':
+                sorter = 'due_date'
+            elif user_input_sort == '2':
+                sorter = 'priority'
+            reverse = l.get_user_confirmation("Low to High?")
+            sort_type = (sorter,reverse)
         elif user_input.lower() in list(saves['goals']): 
             goal = user_input.lower()
         else:

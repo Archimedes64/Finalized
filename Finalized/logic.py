@@ -221,7 +221,15 @@ def tasks_screen(goal, sort_type):
     clear_screen()
     save = load_todos()
     goals = "     ".join((list(save['goals']))).upper()
-    console.print(f"[bold red] \t{goals} [/bold red]\n\t{(' '*len(goals)) + '\t'} {CLOCK_SYMBOL} ⬇:sort")
+    if sort_type[0] == 'due_date':
+        symbol = f'{CLOCK_SYMBOL}'
+    elif sort_type[0] == 'priority':
+        symbol = f'❗'
+    if sort_type[1]:
+        symbol += "🡅 :sort"
+    else:
+        symbol += '⬇ :sort'
+    console.print(f"[bold red] \t{goals} [/bold red]\n\t{(' '*len(goals)) + '\t'} {symbol}")
     console.print(f"[bold yellow] {goal.upper()}: [/bold yellow]")
     
     for task in sort_list(sort_type, save['goals'][goal]['tasks']['todo']):
@@ -246,7 +254,7 @@ def has_saves():
         init_saves()
 
 def sort_list(sort_type, task_list):
-    priority_order = {"high": 1, "medium": 2, "low": 3}
+    priority_order = {"high": 1, "mid": 2, "low": 3}
     if sort_type[0] == 'due_date':
         sorted_list = sorted(task_list, key=lambda x: datetime.datetime.strptime(x['due_date'], '%Y/%m/%d'))
     elif sort_type[0] == 'priority':
