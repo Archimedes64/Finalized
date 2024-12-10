@@ -6,9 +6,25 @@ console = Console()
 DESCRIPTION_NEWLINE_INTERVAL = 7
 PATH = 'topylist/saves'
 def check_length(checked_type,the_checked,length):
-    if len(the_checked) > length:
+    if len(the_checked) < length:
         return [False,f'{checked_type} must be longer than {length} charecters']
     return [True]
+def get_due_date() -> str:
+    while True:    
+        date = input(' Due Date YYYY/MM/DD: ')
+        list(date)
+        if len(date) != 10:
+            continue
+
+        if date[4] != '/' and date[7] != '/':
+            continue
+
+        if int(date[5:7]) > 12:
+            continue
+
+        if int(date[:4]) >= 2024:
+            break
+    return "".join(date)
 def validate_goal(goal):
     save = load_todos()
     if not check_length("Goals",goal,4)[0]:
@@ -101,15 +117,19 @@ def add_goal():
     }
     save_data(save)
     
-def write_todo(due_date):
+def write_todo():
     title = input("Task title: ")
     check = validate_task(title)
+    
     while not check[0]:
         print(check[1])
         title = input("Task title: ")
         check = validate_task(title)
-    task = input(f"{title} details: ")
+
+    details = input(f"{title} details: ")
+    due_date = get_due_date()
     save = load_todos()
+    
     while True:
         goal = input("Goal this is under [leave blank if no goal]: ")
         if goal == '':
@@ -118,8 +138,8 @@ def write_todo(due_date):
             print('not a goal you have made')
             continue
         break
-    save['goals'][goal]['tasks']['todo'].append({'title':title, 'details':task,'due_date':due_date})
-    save['goals']['all']['tasks']['todo'].append({'title':title, 'details':task,'due_date':due_date,'goal':goal})
+    save['goals'][goal]['tasks']['todo'].append({'title':title, 'details':details,'due_date':due_date})
+    save['goals']['all']['tasks']['todo'].append({'title':title, 'details':details,'due_date':due_date,'goal':goal})
 
     save_data(save)
     
