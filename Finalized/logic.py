@@ -4,10 +4,11 @@ import json
 from rich.console import Console
 console = Console()
 DESCRIPTION_NEWLINE_INTERVAL = 7
-PATH = 'topylist/saves'
+PATH = 'Finalized/saves'
+CLOCK_SYMBOL = "🕒"
 def check_length(checked_type,the_checked,length):
     if len(the_checked) < length:
-        return [False,f'{checked_type} must be longer than {length} charecters']
+        return [False,f'{checked_type} must be longer than {length} characters']
     return [True]
 def get_due_date() -> str:
     while True:    
@@ -30,14 +31,21 @@ def validate_goal(goal):
     if not check_length("Goals",goal,4)[0]:
         return check_length("goals",goal,4)
     elif goal in save['goals']:
-        return [False,"Goal already exsists"]
+        return [False,"Goal already exists"]
     return [True]
+def get_priority():
+    while True:
+        priority = input("Task priority(High, Mid, Low): ").lower()
+        if priority not in ('high','mid','low'):
+            print("Not a valid priority")
+            continue
+        return priority
 def validate_task(task):
     save = load_todos()
     if not check_length("Task",task,4)[0]:
         return check_length("tasks",task,4)
     elif any(task['title'] == task for task in save['goals']['all']['tasks']['todo']):
-        return [False,"Task already exsists"]
+        return [False,"Task already exists"]
     return [True]
 def get_goal_details(goal_title):
     user_input = get_user_confirmation(f'Do you want to write your own description for goal:  {goal_title}: ')
@@ -45,7 +53,7 @@ def get_goal_details(goal_title):
         return input(f'Enter your description for {goal_title}: ')
     else:
         print('Ok using default description')
-        return f'Tasks relatated to {goal_title}'
+        return f'Tasks related to {goal_title}'
 def clear_screen():
     # For Windows
     if os.name == 'nt':
@@ -89,6 +97,7 @@ def init_saves():
     print(goals)
     data = {
         'goals': goals,
+        'user_goal_names': user_goals,
         'name': name,
         'tasks_done': 0,
         
@@ -102,6 +111,7 @@ def get_user_confirmation(prompt):
                 return False
             return True
         print('Not valid input')
+
 def add_goal():
     goal_name = input("Name of goal: ").lower()
     check = validate_goal(goal_name)
@@ -115,6 +125,7 @@ def add_goal():
         'tasks': {'todo': [],'done':[]},
         'details': details
     }
+    save['user_goal_names'].append(goal_name)
     save_data(save)
     
 def write_todo():
@@ -127,9 +138,14 @@ def write_todo():
         check = validate_task(title)
 
     details = input(f"{title} details: ")
+    priority = get_priority()
     due_date = get_due_date()
     save = load_todos()
+    print("Available goals:")
     
+    for goal in save['user_goal_names']:
+        console.print(f"-[bold red] {goal.upper()}[/bold red]")
+
     while True:
         goal = input("Goal this is under [leave blank if no goal]: ")
         if goal == '':
@@ -138,8 +154,15 @@ def write_todo():
             print('not a goal you have made')
             continue
         break
-    save['goals'][goal]['tasks']['todo'].append({'title':title, 'details':details,'due_date':due_date})
-    save['goals']['all']['tasks']['todo'].append({'title':title, 'details':details,'due_date':due_date,'goal':goal})
+    tasks_details ={
+        'title':title, 
+        'details':details,
+        'due_date':due_date,
+        'priority':priority
+    }
+    save['goals'][goal]['tasks']['todo'].append(tasks_details)
+    tasks_details['goal'] = goal
+    save['goals']['all']['tasks']['todo'].append(tasks_details)
 
     save_data(save)
     
@@ -163,15 +186,18 @@ def finish_task(task_title):
     print(save)
     save['tasks_done'] += 1 
     save_data(save)
+
 def clear_finished_tasks():
     save = load_todos()
     save['tasks_done'] = 0
     save['tasks']['done'] = []
     save_data(save)
+
 def tasks_screen(goal):
     clear_screen()
     save = load_todos()
-    console.print(f"[bold red] \t{"\t".join((list(save['goals']))).upper()} [/bold red]")
+    goals = "     ".join((list(save['goals']))).upper()
+    console.print(f"[bold red] \t{goals} [/bold red]\n\t{(' '*len(goals))+"\t"} {CLOCK_SYMBOL} ⬇:sort")
     console.print(f"[bold yellow] {goal.upper()}: [/bold yellow]")
     
     for task in save['goals'][goal]['tasks']['todo']:
@@ -189,7 +215,8 @@ def Finish_Mode(goal):
     save = load_todos()
     for task in save['goals'][goal]['tasks']['todo']:
         console.print(f'[bold]   {task['title']}[bold]')
+
 def has_saves():
-    if not os.path.exists('topylist/saves/saves.json'):  
+    if not os.path.exists('Finalized/saves/saves.json'):  
         init_saves()
 
