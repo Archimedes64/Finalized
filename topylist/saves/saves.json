@@ -33,28 +33,6 @@
                     ]
                },
                "details": "tasks that have no goal"
-          },
-          "goal1": {
-               "tasks": {
-                    "todo": [],
-                    "done": [
-                         {
-                              "title": "task",
-                              "details": "task task task task task task task task",
-                              "due_date": "2024/12/01",
-                              "goal": "goal1"
-                         }
-                    ]
-               },
-               "details": "Tasks related to goal1"
-          },
-          "Goal": {
-               "todo": [],
-               "done": []
-          },
-          "goal": {
-               "todo": [],
-               "done": []
           }
      },
      "name": "Connor",

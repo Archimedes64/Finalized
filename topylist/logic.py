@@ -1,6 +1,5 @@
 import os
 import datetime
-import argparse
 import json
 from rich.console import Console
 console = Console()
@@ -24,6 +23,13 @@ def validate_task(task):
     elif any(task['title'] == task for task in save['goals']['all']['tasks']['todo']):
         return [False,"Task already exsists"]
     return [True]
+def get_goal_details(goal_title):
+    user_input = get_user_confirmation(f'Do you want to write your own description for goal:  {goal_title}: ')
+    if user_input:
+        return input(f'Enter your description for {goal_title}: ')
+    else:
+        print('Ok using default description')
+        return f'Tasks relatated to {goal_title}'
 def clear_screen():
     # For Windows
     if os.name == 'nt':
@@ -31,7 +37,7 @@ def clear_screen():
     # For macOS and Linux
     else:
         _ = os.system('clear')
-argparser= argparse.ArgumentParser(description='A simple todo list program')
+
 
 def load_todos():
     with open(PATH + '/saves.json','r') as f:
@@ -59,16 +65,7 @@ def init_saves():
     },
     }
     for goal in user_goals:
-        details = f"Tasks related to {goal}"
-        while True:    
-
-            user_input = input(f'Do you want to write your own description for goal:  {goal}?(y,n): ')
-            if user_input.lower() == 'y':
-                details = input(f'Enter your description for {goal}: ')
-                break
-            elif user_input.lower() == 'n':
-                print('Ok using default description')
-                break
+        details = get_goal_details(goal)
         goals[goal] = {
         'tasks': tasks,
         'details': details
@@ -81,7 +78,7 @@ def init_saves():
         
     }
     save_data(data)
-def user_authenication(prompt):
+def get_user_confirmation(prompt):
     while True:
         user_input =input(prompt+'(y/n): ')
         if user_input.lower() in ['y','n']:
@@ -117,13 +114,6 @@ def write_todo(due_date):
             print('not a goal you have made')
             continue
         break
-    print(type(save))
-    if any(task['title'] == title for task in save['goals'][goal]['tasks']['todo']):
-        clear_screen()
-        print('Already a task with that title')
-        useless = input(": ")
-        return
-
     save['goals'][goal]['tasks']['todo'].append({'title':title, 'details':task,'due_date':due_date})
     save['goals']['all']['tasks']['todo'].append({'title':title, 'details':task,'due_date':due_date,'goal':goal})
 
