@@ -5,7 +5,7 @@ def main():
     goal = 'all'
     sort_type = ('due_date',True)
     while True:
-        saves = l.load_todos()
+        saves = l.load_save()
         mode = 'compact'
         l.tasks_screen(goal=goal,sort_type=sort_type,mode= mode)
         user_input = input("\n:")

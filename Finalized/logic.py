@@ -7,7 +7,7 @@ console = Console()
 DESCRIPTION_NEWLINE_INTERVAL = 7
 PATH = 'Finalized/saves'
 CLOCK_SYMBOL = "🕒"
-
+PRIORITY_ORDER = {"high": 1, "mid": 2, "low": 3}
 # ===========================
 # Input Functions
 # ===========================
@@ -51,7 +51,37 @@ def get_user_confirmation(prompt):
         if user_input.lower() in ['y', 'n']:
             return user_input.lower() == 'y'
         print('Not valid input')
+def get_recurring_interval():
+    valid_intervals = ['monthly','weekly','daily','every time']
+    while True:
+        user_input = input("what interval for this task (Monthly, Weekly, Daily, Every Time): ").lower()
+        if user_input not in valid_intervals:
+            print('Not a valid interval')
+            continue
+        return user_input
+def get_tasks_goal():
+    save = load_save()
+    print("Available goals:")
+    for goal in save['user_goal_names']:
+        console.print(f"-[bold red] {goal.upper()}[/bold red]")
 
+    while True:
+        goal = input("Goal this is under [leave blank if no goal]: ")
+        if goal == '':
+            goal = "misc"
+        elif goal not in list(save['goals']):
+            print('not a goal you have made')
+            continue
+        break
+    return goal
+def get_tasks_title():
+    title = input("Task title: ")
+    check = validate_task(title)
+    while not check[0]:
+        print(check[1])
+        title = input("Task title: ")
+        check = validate_task(title)
+    return title
 # ===========================
 # Validation Functions
 # ===========================
@@ -62,7 +92,7 @@ def check_length(checked_type, the_checked, length):
     return [True]
 
 def validate_goal(goal):
-    save = load_todos()
+    save = load_save()
     if not check_length("Goals", goal, 4)[0]:
         return check_length("goals", goal, 4)
     elif goal in save['goals']:
@@ -70,7 +100,7 @@ def validate_goal(goal):
     return [True]
 
 def validate_task(task_title):
-    save = load_todos()
+    save = load_save()
     if not check_length("Task", task_title, 4)[0]:
         return check_length("tasks", task_title, 4)
     if any(task['title'] == task_title for task in save['goals']['all']['tasks']['todo']):
@@ -81,7 +111,7 @@ def validate_task(task_title):
 # Data Management Functions
 # ===========================
 
-def load_todos():
+def load_save():
     with open(PATH + '/saves.json', 'r') as f:
         return json.load(f)
 
@@ -122,6 +152,12 @@ def init_saves():
         'tasks_done': 0,
     }
     save_data(data)
+def save_new_task(tasks_details,goal):
+    save = load_save()
+    save['goals'][goal]['tasks']['todo'].append(tasks_details)
+    tasks_details['goal'] = goal
+    save['goals']['all']['tasks']['todo'].append(tasks_details)
+    save_data(save)
 
 # ===========================
 # Task Management Functions
@@ -135,7 +171,7 @@ def add_goal():
         print(check[1])
         goal_name = input("Name of goal: ").lower()
         check = validate_goal(goal_name)
-    save = load_todos()
+    save = load_save()
     save['goals'][goal_name] = {
         'tasks': {'todo': [], 'done': []},
         'details': details
@@ -144,45 +180,31 @@ def add_goal():
     save_data(save)
 
 def write_todo():
-    title = input("Task title: ")
-    check = validate_task(title)
-    
-    while not check[0]:
-        print(check[1])
-        title = input("Task title: ")
-        check = validate_task(title)
-
+    title = get_tasks_title()
     details = input(f"{title} details: ")
     priority = get_priority()
-    due_date = get_due_date()
-    save = load_todos()
-    print("Available goals:")
+    is_recurring = get_user_confirmation("Do you want this task to be recurring\n")
     
-    for goal in save['user_goal_names']:
-        console.print(f"-[bold red] {goal.upper()}[/bold red]")
+    if is_recurring:
+        recurring_interval = get_recurring_interval()
+        due_date = None
+    else:
+        due_date = get_due_date()
+        recurring_interval = None
+    
+    goal = get_tasks_goal()
 
-    while True:
-        goal = input("Goal this is under [leave blank if no goal]: ")
-        if goal == '':
-            goal = "misc"
-        elif goal not in list(save['goals']):
-            print('not a goal you have made')
-            continue
-        break
     tasks_details = {
         'title': title, 
         'details': details,
         'due_date': due_date,
-        'priority': priority
+        'priority': priority,
+        'interval': recurring_interval
     }
-    save['goals'][goal]['tasks']['todo'].append(tasks_details)
-    tasks_details['goal'] = goal
-    save['goals']['all']['tasks']['todo'].append(tasks_details)
 
-    save_data(save)
-
+    save_new_task(tasks_details,goal)
 def finish_task(task_title):
-    save = load_todos()
+    save = load_save()
     task = None
     for task_id, tasks in enumerate(save['goals']['all']['tasks']['todo']):
         if tasks['title'] == task_title:
@@ -206,7 +228,7 @@ def finish_task(task_title):
     save_data(save)
 
 def clear_finished_tasks():
-    save = load_todos()
+    save = load_save()
     save['tasks_done'] = 0
     save['goals']['all']['tasks']['done'] = []
     save_data(save)
@@ -236,7 +258,7 @@ def get_sort_symbol(sort_type):
 
 def tasks_screen(goal, sort_type,mode):
     clear_screen()
-    save = load_todos()
+    save = load_save()
     goals = "     ".join((list(save['goals']))).upper()
     symbol = get_sort_symbol(sort_type)
 
@@ -245,7 +267,7 @@ def tasks_screen(goal, sort_type,mode):
     
     for task in sort_list(sort_type, save['goals'][goal]['tasks']['todo']):
         details = task['details']
-        
+        priority = task['priority']
         details = details.split()
         length = len(details)
         for i in range(0, length - 4, DESCRIPTION_NEWLINE_INTERVAL):
@@ -253,10 +275,10 @@ def tasks_screen(goal, sort_type,mode):
                 continue
             details.insert(i + i // DESCRIPTION_NEWLINE_INTERVAL, '\n')
         details = " ".join(details)
-        console.print(f"\n[bold]-{task['title']}\n [/bold]{details}\n[green]{task['due_date']}[/green]")
+        console.print(f"\n[bold]-{task['title']} [yellow](Priority: {priority.upper()})[/yellow] \n [/bold]{details}[green] (DUE: {task['due_date']})[/green]")
 
 def Finish_Mode(goal):
-    save = load_todos()
+    save = load_save()
     for task in save['goals'][goal]['tasks']['todo']:
         console.print(f'[bold]   {task["title"]}[bold]')
 
@@ -265,11 +287,11 @@ def has_saves():
         init_saves()
 
 def sort_list(sort_type, task_list):
-    priority_order = {"high": 1, "mid": 2, "low": 3}
+    
     if sort_type[0] == 'due_date':
         sorted_list = sorted(task_list, key=lambda x: datetime.datetime.strptime(x['due_date'], '%Y/%m/%d'))
     elif sort_type[0] == 'priority':
-        sorted_list = sorted(task_list, key=lambda x: (priority_order.get(x['priority'], 4)))
+        sorted_list = sorted(task_list, key=lambda x: (PRIORITY_ORDER.get(x['priority'], 4)))
     
     if sort_type[1]:
         return sorted_list[::-1]
