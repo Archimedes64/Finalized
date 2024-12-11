@@ -3,10 +3,11 @@ import logic as l
 def main():
     l.has_saves()
     goal = 'all'
-    sort_type = ('due_date',False)
+    sort_type = ('due_date',True)
     while True:
         saves = l.load_todos()
-        l.tasks_screen(goal,sort_type)
+        mode = 'compact'
+        l.tasks_screen(goal=goal,sort_type=sort_type,mode= mode)
         user_input = input("\n:")
         
         if user_input == 'exit':
@@ -50,7 +51,12 @@ def main():
                 sorter = 'priority'
             reverse = l.get_user_confirmation("Low to High?")
             sort_type = (sorter,reverse)
+        elif user_input == "compact":
+            mode = 'compact'
+        elif user_input == 'expand':
+            mode = 'expand'
         elif user_input.lower() in list(saves['goals']): 
+
             goal = user_input.lower()
         else:
             

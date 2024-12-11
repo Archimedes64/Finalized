@@ -183,10 +183,16 @@ def write_todo():
 
 def finish_task(task_title):
     save = load_todos()
+    task = None
     for task_id, tasks in enumerate(save['goals']['all']['tasks']['todo']):
         if tasks['title'] == task_title:
             task = save['goals']['all']['tasks']['todo'][task_id]
             del(save['goals']['all']['tasks']['todo'][task_id])
+            break
+    if task == None:
+        return 
+    for task_id, tasks in enumerate(save['goals'][task['goal']]['tasks']['todo']):
+        if tasks['title'] == task_title:    
             del(save['goals'][task['goal']]['tasks']['todo'][task_id])
             break
     else:
@@ -217,10 +223,7 @@ def clear_screen():
     else:
         _ = os.system('clear')
 
-def tasks_screen(goal, sort_type):
-    clear_screen()
-    save = load_todos()
-    goals = "     ".join((list(save['goals']))).upper()
+def get_sort_symbol(sort_type):
     if sort_type[0] == 'due_date':
         symbol = f'{CLOCK_SYMBOL}'
     elif sort_type[0] == 'priority':
@@ -229,6 +232,14 @@ def tasks_screen(goal, sort_type):
         symbol += "🡅 :sort"
     else:
         symbol += '⬇ :sort'
+    return symbol
+
+def tasks_screen(goal, sort_type,mode):
+    clear_screen()
+    save = load_todos()
+    goals = "     ".join((list(save['goals']))).upper()
+    symbol = get_sort_symbol(sort_type)
+
     console.print(f"[bold red] \t{goals} [/bold red]\n\t{(' '*len(goals)) + '\t'} {symbol}")
     console.print(f"[bold yellow] {goal.upper()}: [/bold yellow]")
     
@@ -240,9 +251,9 @@ def tasks_screen(goal, sort_type):
         for i in range(0, length - 4, DESCRIPTION_NEWLINE_INTERVAL):
             if i == 0:
                 continue
-            details.insert(i + i // DESCRIPTION_NEWLINE_INTERVAL, '\n    ')
+            details.insert(i + i // DESCRIPTION_NEWLINE_INTERVAL, '\n')
         details = " ".join(details)
-        console.print(f"\n[bold]Title: {task['title']}\n  Description:\n [/bold]    {details}\n[bold]  due-date: [/bold][green]{task['due_date']}[/green]")
+        console.print(f"\n[bold]-{task['title']}\n [/bold]{details}\n[green]{task['due_date']}[/green]")
 
 def Finish_Mode(goal):
     save = load_todos()

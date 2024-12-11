@@ -4,31 +4,17 @@
                "tasks": {
                     "todo": [
                          {
-                              "title": "task3",
-                              "details": "",
-                              "due_date": "2024/12/01",
-                              "priority": "low",
-                              "goal": "misc"
-                         },
-                         {
-                              "title": "high",
-                              "details": "",
-                              "due_date": "2024/12/01",
-                              "priority": "high",
-                              "goal": "misc"
-                         },
-                         {
-                              "title": "mid1",
-                              "details": "",
-                              "due_date": "2024/12/01",
+                              "title": "recrruing tasks",
+                              "details": "add recurring tasks to finialized",
+                              "due_date": "2024/12/11",
                               "priority": "mid",
                               "goal": "misc"
                          },
                          {
-                              "title": "lower",
-                              "details": "",
-                              "due_date": "2024/11/01",
-                              "priority": "low",
+                              "title": "finish this stupid project",
+                              "details": "add recurring tasks notifications subtasks finishing goals command support with out entering interface and much more",
+                              "due_date": "2024/01/10",
+                              "priority": "high",
                               "goal": "misc"
                          }
                     ],
@@ -53,24 +39,17 @@
                               "due_date": "2024/12/15",
                               "priority": "low",
                               "goal": "goal2"
-                         }
-                    ]
-               },
-               "details": "every task"
-          },
-          "misc": {
-               "tasks": {
-                    "todo": [
+                         },
                          {
-                              "title": "task3",
-                              "details": "",
+                              "title": "test",
+                              "details": "[orange] this is orange[/orange]",
                               "due_date": "2024/12/01",
                               "priority": "low",
                               "goal": "misc"
                          },
                          {
-                              "title": "high",
-                              "details": "",
+                              "title": "task1",
+                              "details": "descriptions are useful to describe(lol) what the task is and what its for",
                               "due_date": "2024/12/01",
                               "priority": "high",
                               "goal": "misc"
@@ -83,14 +62,113 @@
                               "goal": "misc"
                          },
                          {
+                              "title": "high",
+                              "details": "",
+                              "due_date": "2024/12/01",
+                              "priority": "high",
+                              "goal": "misc"
+                         },
+                         {
                               "title": "lower",
                               "details": "",
                               "due_date": "2024/11/01",
                               "priority": "low",
                               "goal": "misc"
+                         },
+                         {
+                              "title": "task3",
+                              "details": "",
+                              "due_date": "2024/12/01",
+                              "priority": "low",
+                              "goal": "misc"
+                         },
+                         {
+                              "title": "test",
+                              "details": "",
+                              "due_date": "2024/12/01",
+                              "priority": "low",
+                              "goal": "misc"
+                         },
+                         {
+                              "title": "title ",
+                              "details": "details",
+                              "due_date": "2024/12/01",
+                              "priority": "high",
+                              "goal": "goal"
+                         }
+                    ]
+               },
+               "details": "every task"
+          },
+          "misc": {
+               "tasks": {
+                    "todo": [
+                         {
+                              "title": "finish this stupid project",
+                              "details": "add recurring tasks notifications subtasks finishing goals command support with out entering interface and much more",
+                              "due_date": "2024/01/10",
+                              "priority": "high",
+                              "goal": "misc"
+                         },
+                         {
+                              "title": "test",
+                              "details": "",
+                              "due_date": "2024/12/01",
+                              "priority": "low",
+                              "goal": "misc"
                          }
                     ],
-                    "done": []
+                    "done": [
+                         {
+                              "title": "test",
+                              "details": "[orange] this is orange[/orange]",
+                              "due_date": "2024/12/01",
+                              "priority": "low",
+                              "goal": "misc"
+                         },
+                         {
+                              "title": "task1",
+                              "details": "descriptions are useful to describe(lol) what the task is and what its for",
+                              "due_date": "2024/12/01",
+                              "priority": "high",
+                              "goal": "misc"
+                         },
+                         {
+                              "title": "mid1",
+                              "details": "",
+                              "due_date": "2024/12/01",
+                              "priority": "mid",
+                              "goal": "misc"
+                         },
+                         {
+                              "title": "high",
+                              "details": "",
+                              "due_date": "2024/12/01",
+                              "priority": "high",
+                              "goal": "misc"
+                         },
+                         {
+                              "title": "lower",
+                              "details": "",
+                              "due_date": "2024/11/01",
+                              "priority": "low",
+                              "goal": "misc"
+                         },
+                         {
+                              "title": "task3",
+                              "details": "",
+                              "due_date": "2024/12/01",
+                              "priority": "low",
+                              "goal": "misc"
+                         },
+                         {
+                              "title": "test",
+                              "details": "",
+                              "due_date": "2024/12/01",
+                              "priority": "low",
+                              "goal": "misc"
+                         }
+                    ]
                },
                "details": "tasks that have no goal"
           },
@@ -110,6 +188,13 @@
                               "details": "",
                               "due_date": "2024/01/01",
                               "priority": "low",
+                              "goal": "goal"
+                         },
+                         {
+                              "title": "title ",
+                              "details": "details",
+                              "due_date": "2024/12/01",
+                              "priority": "high",
                               "goal": "goal"
                          }
                     ]
@@ -145,5 +230,5 @@
           "goal2"
      ],
      "name": "Connor",
-     "tasks_done": 3
+     "tasks_done": 11
 }
