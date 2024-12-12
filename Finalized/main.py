@@ -7,6 +7,7 @@ def main():
     while True:
         saves = l.load_save()
         mode = 'compact'
+        l.update_pending_tasks()
         l.tasks_screen(goal=goal,sort_type=sort_type,mode= mode)
         user_input = input("\n:")
         

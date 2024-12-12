@@ -2,16 +2,17 @@ import os
 import datetime
 import json
 from rich.console import Console
+from dateutil.rrule import rrule, DAILY, WEEKLY,MONTHLY
 
 console = Console()
 DESCRIPTION_NEWLINE_INTERVAL = 7
 PATH = 'Finalized/saves'
 CLOCK_SYMBOL = "🕒"
 PRIORITY_ORDER = {"high": 1, "mid": 2, "low": 3}
-# ===========================
-# Input Functions
-# ===========================
-
+CURRENT_DATE = datetime.datetime.now().date()
+#===========================
+# Date Functions
+#===========================
 def get_due_date() -> str:
     while True:    
         date = input(' Due Date YYYY/MM/DD: ')
@@ -28,6 +29,38 @@ def get_due_date() -> str:
         if int(date[:4]) >= 2024:
             break
     return "".join(date)
+def get_current_date():
+    current_date = datetime.now()
+    return current_date.strftime('%Y/%m/%d')
+
+#all this was ai im to lazy to deal with a  random module
+def get_next_monthly_occurrence(start_date, count=1):
+    # Convert string date to datetime object
+    start_date = datetime.strptime(start_date, '%Y/%m/%d')
+    # Create a recurrence rule for monthly occurrences
+    rule = rrule(MONTHLY, dtstart=start_date, count=count)
+    # Get the next occurrences
+    occurrences = list(rule)
+    return occurrences
+
+def get_next_daily_occurrence(start_date, count=1):
+    start_date = datetime.strptime(start_date, '%Y/%m/%d')
+    rule = rrule(DAILY, dtstart=start_date, count=count)
+    return list(rule)
+
+def get_next_weekly_occurrence(start_date, count=1):
+    start_date = datetime.strptime(start_date, '%Y/%m/%d')
+    rule = rrule(WEEKLY, dtstart=start_date, count=count)
+    return list(rule)
+
+def check_occurrences(occurrence):
+    return CURRENT_DATE >= occurrence.date()
+        
+    
+# ===========================
+# Input Functions
+# ===========================
+
 
 def get_priority():
     while True:
@@ -103,13 +136,14 @@ def validate_task(task_title):
     save = load_save()
     if not check_length("Task", task_title, 4)[0]:
         return check_length("tasks", task_title, 4)
-    if any(task['title'] == task_title for task in save['goals']['all']['tasks']['todo']):
+    if any(task['title'] == task_title for task in save['goals']['all']['tasks']):
         return [False, "Task already exists"]
     return [True]
 
 # ===========================
 # Data Management Functions
 # ===========================
+
 
 def load_save():
     with open(PATH + '/saves.json', 'r') as f:
@@ -124,41 +158,71 @@ def init_saves():
     name = input('whats your name?: ')
     user_goals = input('What goals do you have that you want to do\nthink of goals like long term tasks that you do tasks to complete\nEnter your goals ex:goal1 goal2 goal3: ')
     user_goals = user_goals.lower().split()
-    tasks = {
-        'todo': [],
-        'done': []
-    }
+
     goals = {  
         'all': {
-            'tasks': tasks,
+            'tasks': [],
             'details': "every task"
         },
         'misc': {
-            'tasks': tasks,
+            'tasks': [],
             'details': "tasks that have no goal"
         },
     }
     for goal in user_goals:
         details = get_goal_details(goal)
         goals[goal] = {
-            'tasks': tasks,
+            'tasks': [],
             'details': details
         }
-    print(goals)
+
     data = {
         'goals': goals,
         'user_goal_names': user_goals,
         'name': name,
+        'upcoming_tasks': [],
         'tasks_done': 0,
     }
     save_data(data)
 def save_new_task(tasks_details,goal):
     save = load_save()
-    save['goals'][goal]['tasks']['todo'].append(tasks_details)
+    save['goals'][goal]['tasks'].append(tasks_details)
     tasks_details['goal'] = goal
-    save['goals']['all']['tasks']['todo'].append(tasks_details)
+    save['goals']['all']['tasks'].append(tasks_details)
     save_data(save)
 
+def format_details(detail):
+    details = detail
+    details = details.split()
+    length = len(details)
+    for i in range(0, length - 4, DESCRIPTION_NEWLINE_INTERVAL):
+        if i == 0:
+            continue
+        details.insert(i + i // DESCRIPTION_NEWLINE_INTERVAL, '\n')
+    details = " ".join(details)
+    return details
+def get_time_tag(task):
+    if task['due_date'] == None:
+        return f'(Interval: {task['interval']['interval'].upper()})'
+    return f'(DUE: {task['due_date']})'
+
+def update_pending_tasks():
+    save = load_save()
+    for task in save['goals']['all']['tasks']:
+        if task['interval']['status'] == 'up':
+            continue
+        next_occurrence = None
+        if task['interval'] == 'daily':
+            next_occurrence = get_next_daily_occurrence(start_date=task['prev_date'])
+        elif task['interval'] == 'weekly':
+            next_occurrence = get_next_weekly_occurrence(start_date=task['prev_date'])
+        elif task['interval'] == 'monthly':
+            next_occurrence = get_next_monthly_occurrence(start_date=task['prev_date'])
+        if next_occurrence and check_occurrences(next_occurrence):
+            task['interval']['status'] = 'up'  
+            task['interval']['prev_date'] = CURRENT_DATE.strftime('%Y%m%d')
+    save_data(save)
+                
 # ===========================
 # Task Management Functions
 # ===========================
@@ -199,31 +263,32 @@ def write_todo():
         'details': details,
         'due_date': due_date,
         'priority': priority,
-        'interval': recurring_interval
-    }
+        'interval': {
+                    'interval':recurring_interval,
+                    'prev_date': datetime.datetime.strftime(CURRENT_DATE,"%Y%m%d"),
+                    'status': 'up'
+        }
+}
 
     save_new_task(tasks_details,goal)
+
 def finish_task(task_title):
     save = load_save()
     task = None
-    for task_id, tasks in enumerate(save['goals']['all']['tasks']['todo']):
+    for i, tasks in enumerate(save['goals']['all']['tasks']):
         if tasks['title'] == task_title:
-            task = save['goals']['all']['tasks']['todo'][task_id]
-            del(save['goals']['all']['tasks']['todo'][task_id])
+            task_id = i
+            task = save['goals']['all']['tasks'][task_id]
             break
     if task == None:
         return 
-    for task_id, tasks in enumerate(save['goals'][task['goal']]['tasks']['todo']):
+    for i, tasks in enumerate(save['goals'][task['goal']]['tasks']):
         if tasks['title'] == task_title:    
-            del(save['goals'][task['goal']]['tasks']['todo'][task_id])
+            task_id1 = i
             break
-    else:
-        print('No task with title: ' + task_title)
-        return
-    
-    save['goals']['all']['tasks']['done'].append(task)
-    save['goals'][task['goal']]['tasks']['done'].append(task)
-    print(save)
+    del(save['goals'][task['goal']]['tasks'][task_id1])
+    del(save['goals']['all']['tasks'][task_id])
+
     save['tasks_done'] += 1 
     save_data(save)
 
@@ -265,21 +330,18 @@ def tasks_screen(goal, sort_type,mode):
     console.print(f"[bold red] \t{goals} [/bold red]\n\t{(' '*len(goals)) + '\t'} {symbol}")
     console.print(f"[bold yellow] {goal.upper()}: [/bold yellow]")
     
-    for task in sort_list(sort_type, save['goals'][goal]['tasks']['todo']):
-        details = task['details']
+    for task in sort_list(sort_type, save['goals'][goal]['tasks']):
+        if task['interval']['status'] == 'pending':
+            continue
+        details = format_details(task['details'])
         priority = task['priority']
-        details = details.split()
-        length = len(details)
-        for i in range(0, length - 4, DESCRIPTION_NEWLINE_INTERVAL):
-            if i == 0:
-                continue
-            details.insert(i + i // DESCRIPTION_NEWLINE_INTERVAL, '\n')
-        details = " ".join(details)
-        console.print(f"\n[bold]-{task['title']} [yellow](Priority: {priority.upper()})[/yellow] \n [/bold]{details}[green] (DUE: {task['due_date']})[/green]")
+        time_tag = get_time_tag(task) # i know this name sucks but idk
+
+        console.print(f"\n[bold]-{task['title']} [yellow](Priority: {priority.upper()})[/yellow] \n [/bold]{details}[green] {time_tag}[/green]")
 
 def Finish_Mode(goal):
     save = load_save()
-    for task in save['goals'][goal]['tasks']['todo']:
+    for task in save['goals'][goal]['tasks']:
         console.print(f'[bold]   {task["title"]}[bold]')
 
 def has_saves():
@@ -287,9 +349,12 @@ def has_saves():
         init_saves()
 
 def sort_list(sort_type, task_list):
+    tasks_with_due_dates = [task for task in task_list if task['due_date'] is not None]
+    tasks_with_intervals = [task for task in task_list if task['due_date'] is None]
+
     
     if sort_type[0] == 'due_date':
-        sorted_list = sorted(task_list, key=lambda x: datetime.datetime.strptime(x['due_date'], '%Y/%m/%d'))
+        sorted_list = tasks_with_intervals + sorted(tasks_with_due_dates, key=lambda x: datetime.datetime.strptime(x['due_date'], '%Y/%m/%d'))
     elif sort_type[0] == 'priority':
         sorted_list = sorted(task_list, key=lambda x: (PRIORITY_ORDER.get(x['priority'], 4)))
     
@@ -297,5 +362,3 @@ def sort_list(sort_type, task_list):
         return sorted_list[::-1]
     return sorted_list
 
-def get_sort_type():
-    pass
