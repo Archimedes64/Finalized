@@ -3,6 +3,37 @@ import datetime
 import json
 from rich.console import Console
 from dateutil.rrule import rrule, DAILY, WEEKLY,MONTHLY
+import pytermgui as ptg
+
+CONFIG = """
+config:
+    InputField:
+        styles:
+            prompt: dim italic
+            cursor: '@72'
+    Label:
+        styles:
+            value: dim bold
+
+    Window:
+        styles:
+            border: '60'
+            corner: '60'
+
+    Container:
+        styles:
+            border: '96'
+            corner: '96'
+"""
+
+OUTPUT = {'task':{}}
+
+
+
+
+
+
+
 
 console = Console()
 DESCRIPTION_NEWLINE_INTERVAL = 7
@@ -13,22 +44,13 @@ CURRENT_DATE = datetime.datetime.now()
 #===========================
 # Date Functions
 #===========================
-def get_due_date() -> str:
-    while True:    
-        date = input(' Due Date YYYY/MM/DD: ')
-        list(date)
-        if len(date) != 10:
-            continue
+def is_valid_due_date(date) -> str:
+    list(date)
+    if len(date) != 10:
+        return False
+    return date[4] == '/' and date[7] == '/'
 
-        if date[4] != '/' and date[7] != '/':
-            continue
 
-        if int(date[5:7]) > 12:
-            continue
-
-        if int(date[:4]) >= 2024:
-            break
-    return "".join(date)
 def get_current_date():
     current_date = datetime.now()
     return current_date.strftime('%Y/%m/%d')
@@ -62,13 +84,9 @@ def check_occurrences(occurrence):
 # ===========================
 
 
-def get_priority():
-    while True:
-        priority = input("Task priority(High, Mid, Low): ").lower()
-        if priority not in ('high','mid','low'):
-            print("Not a valid priority")
-            continue
-        return priority
+def is_valid_priority(priority):
+    return priority  in ('high','mid','low')
+
 
 def get_goal_details(goal_title):
     user_input = get_user_confirmation(f'Do you want to write your own description for goal:  {goal_title}: ')
@@ -120,25 +138,24 @@ def get_tasks_title():
 # ===========================
 
 def check_length(checked_type, the_checked, length):
-    if len(the_checked) < length:
-        return [False, f'{checked_type} must be longer than {length} characters']
-    return [True]
+    return len(the_checked) < length
+        
 
 def validate_goal(goal):
     save = load_save()
     if not check_length("Goals", goal, 4)[0]:
         return check_length("goals", goal, 4)
     elif goal in save['goals']:
-        return [False, "Goal already exists"]
-    return [True]
+        return False
+    return True
 
 def validate_task(task_title):
     save = load_save()
     if not check_length("Task", task_title, 4)[0]:
         return check_length("tasks", task_title, 4)
     if any(task['title'] == task_title for task in save['goals']['all']['tasks']):
-        return [False, "Task already exists"]
-    return [True]
+        return False 
+    return True
 
 # ===========================
 # Data Management Functions
@@ -243,34 +260,7 @@ def add_goal():
     save['user _goal_names'].append(goal_name)
     save_data(save)
 
-def write_todo():
-    title = get_tasks_title()
-    details = input(f"{title} details: ")
-    priority = get_priority()
-    is_recurring = get_user_confirmation("Do you want this task to be recurring\n")
-    
-    if is_recurring:
-        recurring_interval = get_recurring_interval()
-        due_date = None
-    else:
-        due_date = get_due_date()
-        recurring_interval = None
-    
-    goal = get_tasks_goal()
 
-    tasks_details = {
-        'title': title, 
-        'details': details,
-        'due_date': due_date,
-        'priority': priority,
-        'interval': {
-                    'interval':recurring_interval,
-                    'prev_date': datetime.datetime.strftime(CURRENT_DATE,"%Y/%m/%d"),
-                    'status': 'up'
-        }
-}
-
-    save_new_task(tasks_details,goal)
 
 def finish_task(task_title):
     save = load_save()
@@ -350,11 +340,6 @@ def tasks_screen(goal, sort_type,mode):
 
         console.print(f"\n[bold]-{task['title']} [yellow](Priority: {priority.upper()})[/yellow] \n [/bold]{details}[green] {time_tag}[/green]")
 
-def Finish_Mode(goal):
-    save = load_save()
-    for task in save['goals'][goal]['tasks']:
-        console.print(f'[bold]   {task["title"]}[bold]')
-
 def has_saves():
     if not os.path.exists('Finalized/saves/saves.json'):  
         init_saves()
@@ -372,4 +357,95 @@ def sort_list(sort_type, task_list):
     if sort_type[1]:
         return sorted_list[::-1]
     return sorted_list
+def submit_task(manager: ptg.WindowManager, window: ptg.Window) -> None:
 
+    goal = window[1].value 
+    title = window[2].value  
+    details = window[3].value  
+    due_date = window[4].value  
+    priority = window[5].value.lower()
+    interval = window[6].value.lower()
+    task = {
+        'title':title,
+        'details':details,
+        'due_date':due_date,
+        'priority':priority,
+        'interval':
+        {
+            'interval':interval,
+            'prev_date':CURRENT_DATE,
+            'status': 'up'
+        }
+    }
+    # Validate inputs
+    if title:
+        print("Task title cannot be empty.")
+        return
+
+    if not is_valid_priority(priority):
+        print("Priority must be 'High', 'Mid', or 'Low'.")
+        return
+    
+    if not is_valid_due_date(due_date) and due_date:
+        print("Due date must be in YYYY/MM/DD format.")
+        return
+    
+    if not due_date:
+        task['due_date'] = None
+
+    if not interval:
+        task['interval']['interval'] = None
+
+    save_new_task(task,goal)
+
+    manager.stop()
+
+def new_task():
+    with ptg.WindowManager() as manager:
+        window = (
+            ptg.Window(
+                "",
+
+                ptg.InputField(prompt="Goal:", label="Goal"),
+                ptg.InputField(prompt="Title:", label="Title"),
+                ptg.InputField(prompt="Description:", label="Description"),
+                ptg.InputField(prompt="Due Date(leave empty for recurring tasks):", label="Due Date"),
+                ptg.InputField(prompt="Priority(High, Mid, Low):", label="Priority"),
+                ptg.InputField(prompt="Interval(leave empty for normal tasks):", label="Interval"),
+                "" ,
+                ["Submit", lambda *_: submit_task(manager, window)],
+                    width=60,
+                    box="DOUBLE",
+                )
+            .set_title("[210 bold]New Task")
+            .center()
+        )
+        manager.add(window)
+        display_task_list(manager)
+        manager.bind("<Up>", lambda *_: manager.focus_previous())
+        manager.bind("<Down>", lambda *_: manager.focus_next())
+
+
+
+def display_task_list(manager: ptg.WindowManager):
+    save = load_save()
+    tasks = save['goals']['all']['tasks']
+    
+    # Create a display string for the tasks
+    if tasks:
+        task_display = "\n".join([f"- {task['title']} (Priority: {task['priority']})" for task in tasks])
+    else:
+        task_display = "No tasks available."
+
+    # Create the task list window
+    task_list_window = ptg.Window(
+        "Task List",
+        ptg.Label(task_display),  
+        box="DOUBLE",
+        width=60,
+    )
+    
+    manager.add(task_list_window)
+
+    
+new_task()
