@@ -9,7 +9,7 @@ DESCRIPTION_NEWLINE_INTERVAL = 7
 PATH = 'Finalized/saves'
 CLOCK_SYMBOL = "🕒"
 PRIORITY_ORDER = {"high": 1, "mid": 2, "low": 3}
-CURRENT_DATE = datetime.datetime.now()
+CURRENT_DATE = datetime.datetime.now().date()
 #===========================
 # Date Functions
 #===========================
@@ -34,24 +34,24 @@ def get_current_date():
     return current_date.strftime('%Y/%m/%d')
 
 #all this was ai im to lazy to deal with a  random module
-def get_next_monthly_occurrence(start_date, count=2):
+def get_next_monthly_occurrence(start_date, count=1):
     # Convert string date to datetime object
-    start_date = datetime.datetime.strptime(start_date, '%Y/%m/%d')
+    start_date = datetime.strptime(start_date, '%Y/%m/%d')
     # Create a recurrence rule for monthly occurrences
     rule = rrule(MONTHLY, dtstart=start_date, count=count)
     # Get the next occurrences
     occurrences = list(rule)
-    return occurrences[1]
+    return occurrences
 
-def get_next_daily_occurrence(start_date, count=2):
-    start_date = datetime.datetime.strptime(start_date, '%Y/%m/%d')
+def get_next_daily_occurrence(start_date, count=1):
+    start_date = datetime.strptime(start_date, '%Y/%m/%d')
     rule = rrule(DAILY, dtstart=start_date, count=count)
-    return list(rule)[1]
+    return list(rule)
 
-def get_next_weekly_occurrence(start_date, count=2):
-    start_date = datetime.datetime.strptime(start_date, '%Y/%m/%d')
+def get_next_weekly_occurrence(start_date, count=1):
+    start_date = datetime.strptime(start_date, '%Y/%m/%d')
     rule = rrule(WEEKLY, dtstart=start_date, count=count)
-    return list(rule)[1]
+    return list(rule)
 
 def check_occurrences(occurrence):
     return CURRENT_DATE >= occurrence.date()
@@ -212,15 +212,15 @@ def update_pending_tasks():
         if task['interval']['status'] == 'up':
             continue
         next_occurrence = None
-        if task['interval']['interval'] == 'daily':
-            next_occurrence = get_next_daily_occurrence(start_date=task['interval']['prev_date'])
-        elif task['interval']['interval'] == 'weekly':
-            next_occurrence = get_next_weekly_occurrence(start_date=task['interval']['prev_date'])
-        elif task['interval']['interval'] == 'monthly':
-            next_occurrence = get_next_monthly_occurrence(start_date=task['interval']['prev_date'])
+        if task['interval'] == 'daily':
+            next_occurrence = get_next_daily_occurrence(start_date=task['prev_date'])
+        elif task['interval'] == 'weekly':
+            next_occurrence = get_next_weekly_occurrence(start_date=task['prev_date'])
+        elif task['interval'] == 'monthly':
+            next_occurrence = get_next_monthly_occurrence(start_date=task['prev_date'])
         if next_occurrence and check_occurrences(next_occurrence):
             task['interval']['status'] = 'up'  
-            task['interval']['prev_date'] = CURRENT_DATE.strftime('%Y/%m/%d')
+            task['interval']['prev_date'] = CURRENT_DATE.strftime('%Y%m%d')
     save_data(save)
                 
 # ===========================
@@ -265,7 +265,7 @@ def write_todo():
         'priority': priority,
         'interval': {
                     'interval':recurring_interval,
-                    'prev_date': datetime.datetime.strftime(CURRENT_DATE,"%Y/%m/%d"),
+                    'prev_date': datetime.datetime.strftime(CURRENT_DATE,"%Y%m%d"),
                     'status': 'up'
         }
 }
@@ -286,20 +286,9 @@ def finish_task(task_title):
         if tasks['title'] == task_title:    
             task_id1 = i
             break
-    if save['goals'][task['goal']]['tasks'][task_id1]['due_date'] == None:
-        print('debug message')
-        save['goals'][task['goal']]['tasks'][task_id1]['interval']['status'] = 'pending'
-        save['goals']['all']['tasks'][task_id]['interval']['status'] = 'pending'
-        save_data(save)
-        return
-    repeat_task = get_user_confirmation("Do you want to repeat this task?")
-    if repeat_task:
-        new_due_date = get_due_date()
-        save['goals'][task['goal']]['tasks'][task_id1]['due_date'] = new_due_date
-        save['goals']['all']['tasks'][task_id]['due_date'] = new_due_date
-    else:
-        del(save['goals'][task['goal']]['tasks'][task_id1])
-        del(save['goals']['all']['tasks'][task_id])
+    del(save['goals'][task['goal']]['tasks'][task_id1])
+    del(save['goals']['all']['tasks'][task_id])
+
     save['tasks_done'] += 1 
     save_data(save)
 

@@ -5,23 +5,11 @@
                     {
                          "title": "title",
                          "details": "",
-                         "due_date": "2024/12/12",
-                         "priority": "high",
-                         "interval": {
-                              "interval": "daily",
-                              "prev_date": "20241212",
-                              "status": "up"
-                         },
-                         "goal": "misc"
-                    },
-                    {
-                         "title": "title2",
-                         "details": "",
                          "due_date": null,
                          "priority": "high",
                          "interval": {
                               "interval": "daily",
-                              "prev_date": "2024/12/19",
+                              "prev_date": "20241212",
                               "status": "up"
                          },
                          "goal": "misc"
@@ -34,60 +22,12 @@
                     {
                          "title": "title",
                          "details": "",
-                         "due_date": "2024/12/12",
+                         "due_date": null,
                          "priority": "high",
                          "interval": {
                               "interval": "daily",
                               "prev_date": "20241212",
                               "status": "up"
-                         },
-                         "goal": "misc"
-                    },
-                    {
-                         "title": "test",
-                         "details": "please work jesus",
-                         "due_date": null,
-                         "priority": "high",
-                         "interval": {
-                              "interval": "daily",
-                              "prev_date": "20241213",
-                              "status": "pending"
-                         },
-                         "goal": "misc"
-                    },
-                    {
-                         "title": "titel2",
-                         "details": "",
-                         "due_date": null,
-                         "priority": "low",
-                         "interval": {
-                              "interval": "daily",
-                              "prev_date": "20241214",
-                              "status": "pending"
-                         },
-                         "goal": "misc"
-                    },
-                    {
-                         "title": "please",
-                         "details": "",
-                         "due_date": null,
-                         "priority": "high",
-                         "interval": {
-                              "interval": "daily",
-                              "prev_date": "20241216",
-                              "status": "up"
-                         },
-                         "goal": "misc"
-                    },
-                    {
-                         "title": "title2",
-                         "details": "",
-                         "due_date": null,
-                         "priority": "high",
-                         "interval": {
-                              "interval": "daily",
-                              "prev_date": "2024/12/16",
-                              "status": "pending"
                          },
                          "goal": "misc"
                     }
@@ -98,5 +38,5 @@
      "user_goal_names": [],
      "name": "Connor",
      "upcoming_tasks": [],
-     "tasks_done": 3
+     "tasks_done": 0
 }

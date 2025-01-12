@@ -36,7 +36,7 @@ def main():
             l.Finish_Mode(goal)
             l.finish_task(input('Task Tile:'))
         
-        elif any(task['title'] == user_input for task in saves['goals'][goal]['tasks']):
+        elif any(task['title'] == user_input for task in saves['goals'][goal]['tasks']['todo']):
                 l.clear_screen()
         elif user_input == "sort":
             
