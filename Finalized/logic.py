@@ -6,7 +6,7 @@ from dateutil.rrule import rrule, DAILY, WEEKLY,MONTHLY
 
 console = Console()
 DESCRIPTION_NEWLINE_INTERVAL = 7
-PATH = 'Finalized/saves'
+PATH = 'saves'
 CLOCK_SYMBOL = "🕒"
 PRIORITY_ORDER = {"high": 1, "mid": 2, "low": 3}
 CURRENT_DATE = datetime.datetime.now()
@@ -54,7 +54,7 @@ def get_next_weekly_occurrence(start_date, count=2):
     return list(rule)[1]
 
 def check_occurrences(occurrence):
-    return CURRENT_DATE >= occurrence.date()
+    return CURRENT_DATE >= occurrence
         
     
 # ===========================
@@ -352,11 +352,30 @@ def tasks_screen(goal, sort_type,mode):
 
 def Finish_Mode(goal):
     save = load_save()
-    for task in save['goals'][goal]['tasks']:
-        console.print(f'[bold]   {task["title"]}[bold]')
+    clear_screen()
+    console.print('[bold red]Finish[/bold red]\n')
+    tasks = save['goals'][goal]['tasks']
+
+    for indx, task in enumerate(tasks):
+        console.print(f'[bold]{indx+1}:\n   {task["title"]}[bold]')
+
+    while True:
+        task_input = input('\nTask Index:')
+        if task_input.isdigit() is False:
+            print('Make sure the index you put in is a digit')
+            continue
+        task_index = int(task_input) - 1 
+        if len(tasks) <= task_index or task_index < 0:
+            print('\nInvalid Index')
+            continue
+        task_name = tasks[task_index]["title"]     
+        break
+    
+    
+    finish_task(task_name)
 
 def has_saves():
-    if not os.path.exists('Finalized/saves/saves.json'):  
+    if not os.path.exists('saves/saves.json'):  
         init_saves()
 
 def sort_list(sort_type, task_list):
