@@ -13,12 +13,37 @@
                               "status": "pending"
                          },
                          "goal": "school"
+                    },
+                    {
+                         "title": "thistaskisup",
+                         "details": "a",
+                         "due_date": null,
+                         "priority": "low",
+                         "interval": {
+                              "interval": "daily",
+                              "prev_date": "2025/01/12",
+                              "status": "pending"
+                         },
+                         "goal": "misc"
                     }
                ],
                "details": "every task"
           },
           "misc": {
-               "tasks": [],
+               "tasks": [
+                    {
+                         "title": "thistaskisup",
+                         "details": "a",
+                         "due_date": null,
+                         "priority": "low",
+                         "interval": {
+                              "interval": "daily",
+                              "prev_date": "2025/01/12",
+                              "status": "pending"
+                         },
+                         "goal": "misc"
+                    }
+               ],
                "details": "tasks that have no goal"
           },
           "school": {

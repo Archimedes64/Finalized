@@ -354,20 +354,23 @@ def Finish_Mode(goal):
     save = load_save()
     clear_screen()
     console.print('[bold red]Finish[/bold red]\n')
-    tasks = save['goals'][goal]['tasks']
-
+    unfiltered_tasks = save['goals'][goal]['tasks']
+    tasks = [task for task in unfiltered_tasks if task['interval']['status'] == 'up']
     for indx, task in enumerate(tasks):
         console.print(f'[bold]{indx+1}:\n   {task["title"]}[bold]')
 
     while True:
         task_input = input('\nTask Index:')
+
         if task_input.isdigit() is False:
             print('Make sure the index you put in is a digit')
             continue
+
         task_index = int(task_input) - 1 
         if len(tasks) <= task_index or task_index < 0:
             print('\nInvalid Index')
             continue
+
         task_name = tasks[task_index]["title"]     
         break
     
