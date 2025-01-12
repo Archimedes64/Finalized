@@ -1,6 +1,5 @@
 import logic as l
 
-
 def main():
     l.has_saves()
     goal = 'all'
@@ -13,7 +12,6 @@ def main():
         user_input = input("\n:")
         
         if user_input == 'exit':
-
             print('Goodbye')
             break
         
