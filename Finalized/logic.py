@@ -10,6 +10,8 @@ PATH = 'saves'
 CLOCK_SYMBOL = "🕒"
 PRIORITY_ORDER = {"high": 1, "mid": 2, "low": 3}
 CURRENT_DATE = datetime.datetime.now()
+#CURRENT_DATE = datetime.datetime.strptime("2025/02/13","%Y/%m/%d")
+
 #===========================
 # Date Functions
 #===========================
@@ -28,12 +30,14 @@ def get_due_date() -> str:
 
         if int(date[:4]) >= 2024:
             break
+            
     return "".join(date)
+
 def get_current_date():
     current_date = datetime.now()
     return current_date.strftime('%Y/%m/%d')
 
-#all this was ai im to lazy to deal with a  random module
+#all this was ai 
 def get_next_monthly_occurrence(start_date, count=2):
     # Convert string date to datetime object
     start_date = datetime.datetime.strptime(start_date, '%Y/%m/%d')
@@ -55,7 +59,7 @@ def get_next_weekly_occurrence(start_date, count=2):
 
 def check_occurrences(occurrence):
     return CURRENT_DATE >= occurrence
-        
+#ai end
     
 # ===========================
 # Input Functions
@@ -270,40 +274,58 @@ def write_todo():
         }
 }
 
-    save_new_task(tasks_details,goal)
-
-def finish_task(task_title):
+    save_new_task(tasks_details, goal)
+def get_task_ids(task_title):
     save = load_save()
-    task = None
+    
     for i, tasks in enumerate(save['goals']['all']['tasks']):
         if tasks['title'] == task_title:
             task_id = i
-            task = save['goals']['all']['tasks'][task_id]
             break
-    if task == None:
-        return 
-    for i, tasks in enumerate(save['goals'][task['goal']]['tasks']):
-        if tasks['title'] == task_title:    
-            task_id1 = i
+            
+    task_goal = save['goals']['all']['tasks'][task_id]['goal']    
+    for i, tasks in enumerate(save['goals'][task_goal]['tasks']):
+            if tasks['title'] == task_title:    
+                return [task_id,i]
+
+def finish_task(task_title):
+    save = load_save()
+    
+    task_id, task_id1 = get_task_ids(task_title)
+    task_all = save['goals']['all']['tasks'][task_id]
+    task = save['goals'][task_all['goal']]['tasks'][task_id1]
+    
+    while True:
+        if task['interval']['interval'] == "Every Time":
+            save['tasks_done'] += 1 
+            save_data(save)
+            return
+            
+        if task['due_date'] == None:
+            task['interval']['status'] = 'pending'
+            task_all['interval']['status'] = 'pending'
             break
-    if save['goals'][task['goal']]['tasks'][task_id1]['due_date'] == None:
-        print('debug message')
-        save['goals'][task['goal']]['tasks'][task_id1]['interval']['status'] = 'pending'
-        save['goals']['all']['tasks'][task_id]['interval']['status'] = 'pending'
-        save_data(save)
-        return
-    repeat_task = get_user_confirmation("Do you want to repeat this task?")
-    if repeat_task:
-        new_due_date = get_due_date()
-        save['goals'][task['goal']]['tasks'][task_id1]['due_date'] = new_due_date
-        save['goals']['all']['tasks'][task_id]['due_date'] = new_due_date
-    else:
+        
+        repeat_task = get_user_confirmation("Do you want to repeat this task?")
+
+        if repeat_task:
+            new_due_date = get_due_date()
+            task['due_date'] = new_due_date
+            task_all['due_date'] = new_due_date
+            break
+             
         del(save['goals'][task['goal']]['tasks'][task_id1])
         del(save['goals']['all']['tasks'][task_id])
+
+        save['tasks_done'] += 1 
+        save_data(save)
+        return
+        
     save['tasks_done'] += 1 
     save_data(save)
 
 def clear_finished_tasks():
+
     save = load_save()
     save['tasks_done'] = 0
     save['goals']['all']['tasks']['done'] = []

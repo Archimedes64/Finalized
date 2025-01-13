@@ -9,7 +9,7 @@
                          "priority": "low",
                          "interval": {
                               "interval": "daily",
-                              "prev_date": "2025/01/12",
+                              "prev_date": "2025/01/13",
                               "status": "pending"
                          },
                          "goal": "school"
@@ -21,6 +21,30 @@
                          "priority": "low",
                          "interval": {
                               "interval": "daily",
+                              "prev_date": "2025/01/13",
+                              "status": "pending"
+                         },
+                         "goal": "misc"
+                    },
+                    {
+                         "title": "test",
+                         "details": "details",
+                         "due_date": null,
+                         "priority": "low",
+                         "interval": {
+                              "interval": "monthly",
+                              "prev_date": "2025/02/13",
+                              "status": "pending"
+                         },
+                         "goal": "misc"
+                    },
+                    {
+                         "title": "test2",
+                         "details": "",
+                         "due_date": null,
+                         "priority": "low",
+                         "interval": {
+                              "interval": "every time",
                               "prev_date": "2025/01/12",
                               "status": "pending"
                          },
@@ -38,6 +62,30 @@
                          "priority": "low",
                          "interval": {
                               "interval": "daily",
+                              "prev_date": "2025/01/12",
+                              "status": "pending"
+                         },
+                         "goal": "misc"
+                    },
+                    {
+                         "title": "test",
+                         "details": "details",
+                         "due_date": null,
+                         "priority": "low",
+                         "interval": {
+                              "interval": "monthly",
+                              "prev_date": "2025/01/13",
+                              "status": "pending"
+                         },
+                         "goal": "misc"
+                    },
+                    {
+                         "title": "test2",
+                         "details": "",
+                         "due_date": null,
+                         "priority": "low",
+                         "interval": {
+                              "interval": "every time",
                               "prev_date": "2025/01/12",
                               "status": "pending"
                          },
@@ -69,5 +117,5 @@
      ],
      "name": "Connor",
      "upcoming_tasks": [],
-     "tasks_done": 0
+     "tasks_done": 6
 }
