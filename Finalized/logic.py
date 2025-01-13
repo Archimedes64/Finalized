@@ -335,13 +335,12 @@ def clear_finished_tasks():
 # Display Functions
 # ===========================
 
+
 def clear_screen():
-    # For Windows
     if os.name == 'nt':
-        _ = os.system('cls')
-    # For macOS and Linux
+        os.system('cls')
     else:
-        _ = os.system('clear')
+        os.system('clear')
 
 def get_sort_symbol(sort_type):
     if sort_type[0] == 'due_date':
@@ -363,42 +362,51 @@ def tasks_screen(goal, sort_type,mode):
     console.print(f"[bold red] \t{goals} [/bold red]\n\t{(' '*len(goals)) + '\t'} {symbol}")
     console.print(f"[bold yellow] {goal.upper()}: [/bold yellow]")
     
-    for task in sort_list(sort_type, save['goals'][goal]['tasks']):
-        if task['interval']['status'] == 'pending':
-            continue
+    for task in sort_list(sort_type, get_tasks_todo(goal)):
+    
         details = format_details(task['details'])
         priority = task['priority']
         time_tag = get_time_tag(task) # i know this name sucks but idk
 
         console.print(f"\n[bold]-{task['title']} [yellow](Priority: {priority.upper()})[/yellow] \n [/bold]{details}[green] {time_tag}[/green]")
 
+def list_up_tasks(goal):
+    tasks = get_tasks_todo(goal)
+    for indx, task in enumerate(tasks):
+        console.print(f'[bold]{indx+1}:\n   {task["title"]}[bold]')
+
+def get_amount_of_tasks_todo(goal):
+    print(len(get_tasks_todo(goal)))
+    
 def Finish_Mode(goal):
     save = load_save()
     clear_screen()
     console.print('[bold red]Finish[/bold red]\n')
+    list_up_tasks(goal)
+    finish_mode_no_info(goal)
+
+def get_tasks_todo(goal):
+    save = load_save()
     unfiltered_tasks = save['goals'][goal]['tasks']
-    tasks = [task for task in unfiltered_tasks if task['interval']['status'] == 'up']
-    for indx, task in enumerate(tasks):
-        console.print(f'[bold]{indx+1}:\n   {task["title"]}[bold]')
-
+    return [task for task in unfiltered_tasks if task['interval']['status'] == 'up']
+    
+def finish_mode_no_info(goal):
+    tasks = get_tasks_todo(goal)
     while True:
-        task_input = input('\nTask Index:')
-
-        if task_input.isdigit() is False:
-            print('Make sure the index you put in is a digit')
-            continue
-
-        task_index = int(task_input) - 1 
-        if len(tasks) <= task_index or task_index < 0:
-            print('\nInvalid Index')
-            continue
-
-        task_name = tasks[task_index]["title"]     
-        break
+            task_input = input('\nTask Index:')
     
+            if task_input.isdigit() is False:
+                print('Make sure the index you put in is a digit')
+                continue
     
+            task_index = int(task_input) - 1 
+            if len(tasks) <= task_index or task_index < 0:
+                print('\nInvalid Index')
+                continue
+    
+            task_name = tasks[task_index]["title"]     
+            break
     finish_task(task_name)
-
 def has_saves():
     if not os.path.exists('saves/saves.json'):  
         init_saves()

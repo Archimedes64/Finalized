@@ -1,6 +1,32 @@
 import logic as l
+import argparse
 
 def main():
+
+    parser = argparse.ArgumentParser(prog='Finalized',description='Todo list')
+
+    parser.add_argument('-at',action='store_true')
+    parser.add_argument('-ag',action='store_true')
+    parser.add_argument('-f',action='store_true')
+    parser.add_argument('-l',action='store_true')
+    parser.add_argument('-g',action='store_true')
+
+    args = parser.parse_args()
+
+    if args.at:
+        l.write_todo()
+    elif args.ag:
+        l.add_goal()
+    elif args.f:
+        l.finish_mode_no_info('all')
+    elif args.l:
+        l.list_up_tasks('all')
+    elif args.g:
+        l.get_amount_of_tasks_todo('all')
+    else:
+        tui()
+    
+def tui():
     l.has_saves()
     goal = 'all'
     sort_type = ('due_date',True)
@@ -59,4 +85,5 @@ def main():
         else:
             
             print("Invalid input")
-main()
+if __name__ == "__main__":
+    main()
