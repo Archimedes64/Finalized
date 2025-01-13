@@ -15,6 +15,20 @@ CURRENT_DATE = datetime.datetime.now()
 #==========================
 # Config Loading
 #==========================
+with open('config.toml', 'r') as f:
+    config = toml.load(f)
+# this might be the worse thing ive ever writen completly unreadabel
+ # function takes a dictionary of default values for the settings and checks if new ones were writen in the config
+# if they are it replaces the default with the new value 
+# returns new settings 
+#ps: as of 10 mins after writing originally this was re writen so it does not need this documentation to under stand
+
+def replace_defaults(defaults, config_settings):
+    new_settings = defaults
+    for default in defaults:
+        if default.lower() in config_settings:
+            new_settings[default] = config_settings[default.lower()]
+    return new_settings
 
 COLORS_DEFAULT = {
     'TOP_BAR':'red',
@@ -26,16 +40,12 @@ COLORS_DEFAULT = {
     'TASK_PRIORITY_TAG': 'yellow',
     'TASK_TIME_TAG': 'green'
 }
-
-colors = COLORS_DEFAULT
-
-with open('config.toml', 'r') as f:
-    config = toml.load(f)
-for color in COLORS_DEFAULT:
-    print(color.lower())
-    if color.lower() in config['colors']:
-        colors[color] = config['colors'][color.lower()]
-
+DISPLAY_DEFAULT = {
+    'DEFAULT_SORT':'due_date',
+    'IS_DEFAULT_SORT_REVERSED':True
+}
+colors = replace_defaults(COLORS_DEFAULT, config['colors'])
+display_settings = replace_defaults(DISPLAY_DEFAULT,config['display'])
 #===========================
 # Date Functions
 #===========================
@@ -159,7 +169,7 @@ def check_length(checked_type, the_checked, length):
 def validate_goal(goal):
     save = load_save()
     if not check_length("Goals", goal, 4)[0]:
-        return check_length("goals", goal, 4)
+        return check_length['goals']['all']("goals", goal, 4)
     elif goal in save['goals']:
         return [False, "Goal already exists"]
     return [True]

@@ -1,5 +1,18 @@
 {
-     "tasks": [],
+     "tasks": [
+          {
+               "title": "finish ap csp B project",
+               "details": "finish the creating your own custom image filter project",
+               "due_date": "2025/01/15",
+               "priority": "high",
+               "interval": {
+                    "interval": null,
+                    "prev_date": "2025/01/13",
+                    "status": "up"
+               },
+               "goal": "school"
+          }
+     ],
      "goals": {
           "misc": {
                "details": "tasks that have no goal"

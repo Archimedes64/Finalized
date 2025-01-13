@@ -3,3 +3,8 @@ top_bar = "blue"
 goal_indicator = "yellow"
 sort_indicator = "purple"
 task_priority_tag = "red"
+
+[display]
+default_sort = "priority"
+is_default_sort_reversed = true
+

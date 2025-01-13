@@ -2,6 +2,8 @@ import logic as l
 import argparse
 import toml
 
+colors = l.colors
+display_settings = l.display_settings
 def main():
 
     parser = argparse.ArgumentParser(prog='Finalized',description='Todo list')
@@ -30,7 +32,7 @@ def main():
 def tui():
     l.has_saves()
     goal = 'all'
-    sort_type = ('due_date',True)
+    sort_type = (display_settings['DEFAULT_SORT'],display_settings['IS_DEFAULT_SORT_REVERSED'])
     while True:
         saves = l.load_save()
         mode = 'compact'
