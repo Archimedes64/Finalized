@@ -1,5 +1,6 @@
 import logic as l
 import argparse
+import toml
 
 def main():
 
@@ -42,19 +43,7 @@ def tui():
             break
         
         elif user_input == 'add':
-            l.clear_screen()
-            l.console.print("[bold red]Add[/bold red]")
-            
-            while True:    
-                user_input_add = input("What do you want to add?\n  Goal = 1\n  Task = 2\n  Subtask = 3\n\n: ")
-                if user_input_add not in ['1','2','3']:
-                    print("Not a valid input please enter a number 1-3")
-                break
-            if user_input_add == "1":
-                l.add_goal()
-            
-            elif user_input_add == "2":
-                l.write_todo()
+            l.Add_Mode()
         
         elif user_input == 'finish':
             l.Finish_Mode(goal)

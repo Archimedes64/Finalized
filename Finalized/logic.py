@@ -1,6 +1,7 @@
 import os
 import datetime
 import json
+import toml
 from rich.console import Console
 from dateutil.rrule import rrule, DAILY, WEEKLY,MONTHLY
 
@@ -11,6 +12,27 @@ CLOCK_SYMBOL = "🕒"
 PRIORITY_ORDER = {"high": 1, "mid": 2, "low": 3}
 CURRENT_DATE = datetime.datetime.now()
 #CURRENT_DATE = datetime.datetime.strptime("2025/02/13","%Y/%m/%d")
+#==========================
+# Config Loading
+#==========================
+COLORS_DEFAULT = {
+    'TOP_BAR':'red',
+    'GOAL_INDICATOR':'yellow',
+    'MODE_INDICATOR':'red',
+    'SORT_INDICATOR':'grey',
+    'ACTION': 'white',
+    'TASK': 'white',
+    'TASK_DETAILS':'grey',
+    'TASK_PRIORITY_TAG': 'yellow',
+    'TASK_TIME_TAG': 'green'
+}
+colors = COLORS_DEFAULT
+with open('config.toml', 'r') as f:
+    config = toml.load(f)
+for color in COLORS_DEFAULT:
+    print(color.lower())
+    if color.lower() in config['colors']:
+        colors[color] = config['colors'][color.lower()]
 
 #===========================
 # Date Functions
@@ -359,8 +381,9 @@ def tasks_screen(goal, sort_type,mode):
     goals = "     ".join((list(save['goals']))).upper()
     symbol = get_sort_symbol(sort_type)
 
-    console.print(f"[bold red] \t{goals} [/bold red]\n\t{(' '*len(goals)) + '\t'} {symbol}")
-    console.print(f"[bold yellow] {goal.upper()}: [/bold yellow]")
+    console.print(f"[bold {colors['TOP_BAR']}] \t{goals} [/bold {colors['TOP_BAR']}]"
+                  f"\n\t{(' '*len(goals)) + '\t'}[{colors['SORT_INDICATOR']}] {symbol}[/{colors['SORT_INDICATOR']}]")
+    console.print(f"[bold {colors['GOAL_INDICATOR']}] {goal.upper()}: [/bold {colors['GOAL_INDICATOR']}]")
     
     for task in sort_list(sort_type, get_tasks_todo(goal)):
     
@@ -368,7 +391,11 @@ def tasks_screen(goal, sort_type,mode):
         priority = task['priority']
         time_tag = get_time_tag(task) # i know this name sucks but idk
 
-        console.print(f"\n[bold]-{task['title']} [yellow](Priority: {priority.upper()})[/yellow] \n [/bold]{details}[green] {time_tag}[/green]")
+        console.print(f"\n[bold] [{colors['TASK']}]-{task['title']} [/{colors['TASK']}]"
+            f"[{colors['TASK_PRIORITY_TAG']}](Priority: {priority.upper()})[/{colors['TASK_PRIORITY_TAG']}][/bold] \n"
+            f"[{colors['TASK_DETAILS']}]{details}[/{colors['TASK_DETAILS']}]"
+            f"[{colors['TASK_TIME_TAG']}] {time_tag}[/{colors['TASK_TIME_TAG']}]"
+            )
 
 def list_up_tasks(goal):
     tasks = get_tasks_todo(goal)
@@ -381,10 +408,24 @@ def get_amount_of_tasks_todo(goal):
 def Finish_Mode(goal):
     save = load_save()
     clear_screen()
-    console.print('[bold red]Finish[/bold red]\n')
+    console.print(f'[bold {colors['MODE_INDICATOR']}]Finish[/bold {colors['MODE_INDICATOR']}]\n')
     list_up_tasks(goal)
     finish_mode_no_info(goal)
+def Add_Mode():
+    clear_screen()
+    console.print(f"[bold {colors['MODE_INDICATOR']}]Add [/bold {colors['MODE_INDICATOR']}]")
 
+    while True:
+        user_input_add = input("What do you want to add?\n  Goal = 1\n  Task = 2\n  Subtask = 3\n\n: ")
+        if user_input_add not in ['1','2','3']:
+            print("Not a valid input please enter a number 1-3")
+        break
+    if user_input_add == "1":
+        add_goal()
+
+    elif user_input_add == "2":
+        write_todo()
+        
 def get_tasks_todo(goal):
     save = load_save()
     unfiltered_tasks = save['goals'][goal]['tasks']

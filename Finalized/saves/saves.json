@@ -49,6 +49,18 @@
                               "status": "pending"
                          },
                          "goal": "misc"
+                    },
+                    {
+                         "title": "Finish config",
+                         "details": "ovb",
+                         "due_date": "2024/01/14",
+                         "priority": "high",
+                         "interval": {
+                              "interval": null,
+                              "prev_date": "2025/01/13",
+                              "status": "up"
+                         },
+                         "goal": "misc"
                     }
                ],
                "details": "every task"
@@ -88,6 +100,18 @@
                               "interval": "every time",
                               "prev_date": "2025/01/12",
                               "status": "pending"
+                         },
+                         "goal": "misc"
+                    },
+                    {
+                         "title": "Finish config",
+                         "details": "ovb",
+                         "due_date": "2024/01/14",
+                         "priority": "high",
+                         "interval": {
+                              "interval": null,
+                              "prev_date": "2025/01/13",
+                              "status": "up"
                          },
                          "goal": "misc"
                     }
