@@ -5,14 +5,14 @@ Currently it is not ready for use.
    
 # To Do   
 
-It needs a few things to added  
+It needs a few things added  
   
-1. cli options to save time  
-2. better looks  
-3. Themes?  
+1. <del>cli options to save time  </del>
+2. better ui  
+3. <del>Config</del>
 4. Notifications  
 5. Sub Tasks  
-6. anything else 
+6. Percentage Bar?
  # Dependencies
 1. rich  
 2. dateutil   
