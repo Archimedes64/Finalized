@@ -15,18 +15,20 @@ CURRENT_DATE = datetime.datetime.now()
 #==========================
 # Config Loading
 #==========================
+
 COLORS_DEFAULT = {
     'TOP_BAR':'red',
     'GOAL_INDICATOR':'yellow',
     'MODE_INDICATOR':'red',
     'SORT_INDICATOR':'grey',
-    'ACTION': 'white',
     'TASK': 'white',
     'TASK_DETAILS':'grey',
     'TASK_PRIORITY_TAG': 'yellow',
     'TASK_TIME_TAG': 'green'
 }
+
 colors = COLORS_DEFAULT
+
 with open('config.toml', 'r') as f:
     config = toml.load(f)
 for color in COLORS_DEFAULT:
@@ -37,6 +39,7 @@ for color in COLORS_DEFAULT:
 #===========================
 # Date Functions
 #===========================
+
 def get_due_date() -> str:
     while True:    
         date = input(' Due Date YYYY/MM/DD: ')
@@ -110,6 +113,7 @@ def get_user_confirmation(prompt):
         if user_input.lower() in ['y', 'n']:
             return user_input.lower() == 'y'
         print('Not valid input')
+        
 def get_recurring_interval():
     valid_intervals = ['monthly','weekly','daily','every time']
     while True:
@@ -118,6 +122,7 @@ def get_recurring_interval():
             print('Not a valid interval')
             continue
         return user_input
+        
 def get_tasks_goal():
     save = load_save()
     print("Available goals:")
@@ -133,6 +138,7 @@ def get_tasks_goal():
             continue
         break
     return goal
+    
 def get_tasks_title():
     title = input("Task title: ")
     check = validate_task(title)
@@ -162,7 +168,7 @@ def validate_task(task_title):
     save = load_save()
     if not check_length("Task", task_title, 4)[0]:
         return check_length("tasks", task_title, 4)
-    if any(task['title'] == task_title for task in save['goals']['all']['tasks']):
+    if any(task['title'] == task_title for task in save['tasks']):
         return [False, "Task already exists"]
     return [True]
 
@@ -186,35 +192,29 @@ def init_saves():
     user_goals = user_goals.lower().split()
 
     goals = {  
-        'all': {
-            'tasks': [],
-            'details': "every task"
-        },
         'misc': {
-            'tasks': [],
             'details': "tasks that have no goal"
-        },
+        }
     }
     for goal in user_goals:
         details = get_goal_details(goal)
         goals[goal] = {
-            'tasks': [],
             'details': details
         }
 
     data = {
+        'tasks': [],
         'goals': goals,
         'user_goal_names': user_goals,
         'name': name,
-        'upcoming_tasks': [],
-        'tasks_done': 0,
+        'tasks_done': 0
     }
     save_data(data)
+    
 def save_new_task(tasks_details,goal):
     save = load_save()
-    save['goals'][goal]['tasks'].append(tasks_details)
     tasks_details['goal'] = goal
-    save['goals']['all']['tasks'].append(tasks_details)
+    save['tasks'].append(tasks_details)
     save_data(save)
 
 def format_details(detail):
@@ -227,6 +227,7 @@ def format_details(detail):
         details.insert(i + i // DESCRIPTION_NEWLINE_INTERVAL, '\n')
     details = " ".join(details)
     return details
+    
 def get_time_tag(task):
     if task['due_date'] == None:
         return f'(Interval: {task['interval']['interval'].upper()})'
@@ -234,9 +235,8 @@ def get_time_tag(task):
 
 def update_pending_tasks():
     save = load_save()
-    for task in save['goals']['all']['tasks']:
-        if task['interval']['status'] == 'up':
-            continue
+    for task in get_tasks_todo('all'):
+        
         next_occurrence = None
         if task['interval']['interval'] == 'daily':
             next_occurrence = get_next_daily_occurrence(start_date=task['interval']['prev_date'])
@@ -270,6 +270,7 @@ def add_goal():
     save_data(save)
 
 def write_todo():
+
     title = get_tasks_title()
     details = input(f"{title} details: ")
     priority = get_priority()
@@ -297,25 +298,20 @@ def write_todo():
 }
 
     save_new_task(tasks_details, goal)
+    
 def get_task_ids(task_title):
     save = load_save()
     
-    for i, tasks in enumerate(save['goals']['all']['tasks']):
+    for i, tasks in enumerate(save['tasks']):
         if tasks['title'] == task_title:
-            task_id = i
-            break
+            return i 
             
-    task_goal = save['goals']['all']['tasks'][task_id]['goal']    
-    for i, tasks in enumerate(save['goals'][task_goal]['tasks']):
-            if tasks['title'] == task_title:    
-                return [task_id,i]
 
 def finish_task(task_title):
     save = load_save()
     
-    task_id, task_id1 = get_task_ids(task_title)
-    task_all = save['goals']['all']['tasks'][task_id]
-    task = save['goals'][task_all['goal']]['tasks'][task_id1]
+    task_id  = get_task_ids(task_title)
+    task = save['tasks'][task_id]
     
     while True:
         if task['interval']['interval'] == "Every Time":
@@ -325,19 +321,15 @@ def finish_task(task_title):
             
         if task['due_date'] == None:
             task['interval']['status'] = 'pending'
-            task_all['interval']['status'] = 'pending'
             break
         
         repeat_task = get_user_confirmation("Do you want to repeat this task?")
-
         if repeat_task:
             new_due_date = get_due_date()
             task['due_date'] = new_due_date
-            task_all['due_date'] = new_due_date
             break
              
-        del(save['goals'][task['goal']]['tasks'][task_id1])
-        del(save['goals']['all']['tasks'][task_id])
+        del(save['tasks'][task_id])
 
         save['tasks_done'] += 1 
         save_data(save)
@@ -350,7 +342,6 @@ def clear_finished_tasks():
 
     save = load_save()
     save['tasks_done'] = 0
-    save['goals']['all']['tasks']['done'] = []
     save_data(save)
 
 # ===========================
@@ -411,6 +402,7 @@ def Finish_Mode(goal):
     console.print(f'[bold {colors['MODE_INDICATOR']}]Finish[/bold {colors['MODE_INDICATOR']}]\n')
     list_up_tasks(goal)
     finish_mode_no_info(goal)
+
 def Add_Mode():
     clear_screen()
     console.print(f"[bold {colors['MODE_INDICATOR']}]Add [/bold {colors['MODE_INDICATOR']}]")
@@ -428,7 +420,7 @@ def Add_Mode():
         
 def get_tasks_todo(goal):
     save = load_save()
-    unfiltered_tasks = save['goals'][goal]['tasks']
+    unfiltered_tasks = save['tasks']
     return [task for task in unfiltered_tasks if task['interval']['status'] == 'up']
     
 def finish_mode_no_info(goal):
@@ -455,7 +447,6 @@ def has_saves():
 def sort_list(sort_type, task_list):
     tasks_with_due_dates = [task for task in task_list if task['due_date'] is not None]
     tasks_with_intervals = [task for task in task_list if task['due_date'] is None]
-
     
     if sort_type[0] == 'due_date':
         sorted_list = tasks_with_intervals + sorted(tasks_with_due_dates, key=lambda x: datetime.datetime.strptime(x['due_date'], '%Y/%m/%d'))
@@ -465,4 +456,3 @@ def sort_list(sort_type, task_list):
     if sort_type[1]:
         return sorted_list[::-1]
     return sorted_list
-

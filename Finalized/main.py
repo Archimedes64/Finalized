@@ -48,8 +48,6 @@ def tui():
         elif user_input == 'finish':
             l.Finish_Mode(goal)
                     
-        elif any(task['title'] == user_input for task in saves['goals'][goal]['tasks']):
-                l.clear_screen()
         elif user_input == "sort":
             
             while True:    

@@ -1,145 +1,16 @@
 {
+     "tasks": [],
      "goals": {
-          "all": {
-               "tasks": [
-                    {
-                         "title": "title",
-                         "details": "details",
-                         "due_date": null,
-                         "priority": "low",
-                         "interval": {
-                              "interval": "daily",
-                              "prev_date": "2025/01/13",
-                              "status": "pending"
-                         },
-                         "goal": "school"
-                    },
-                    {
-                         "title": "thistaskisup",
-                         "details": "a",
-                         "due_date": null,
-                         "priority": "low",
-                         "interval": {
-                              "interval": "daily",
-                              "prev_date": "2025/01/13",
-                              "status": "pending"
-                         },
-                         "goal": "misc"
-                    },
-                    {
-                         "title": "test",
-                         "details": "details",
-                         "due_date": null,
-                         "priority": "low",
-                         "interval": {
-                              "interval": "monthly",
-                              "prev_date": "2025/02/13",
-                              "status": "pending"
-                         },
-                         "goal": "misc"
-                    },
-                    {
-                         "title": "test2",
-                         "details": "",
-                         "due_date": null,
-                         "priority": "low",
-                         "interval": {
-                              "interval": "every time",
-                              "prev_date": "2025/01/12",
-                              "status": "pending"
-                         },
-                         "goal": "misc"
-                    },
-                    {
-                         "title": "Finish config",
-                         "details": "ovb",
-                         "due_date": "2024/01/14",
-                         "priority": "high",
-                         "interval": {
-                              "interval": null,
-                              "prev_date": "2025/01/13",
-                              "status": "up"
-                         },
-                         "goal": "misc"
-                    }
-               ],
-               "details": "every task"
-          },
           "misc": {
-               "tasks": [
-                    {
-                         "title": "thistaskisup",
-                         "details": "a",
-                         "due_date": null,
-                         "priority": "low",
-                         "interval": {
-                              "interval": "daily",
-                              "prev_date": "2025/01/12",
-                              "status": "pending"
-                         },
-                         "goal": "misc"
-                    },
-                    {
-                         "title": "test",
-                         "details": "details",
-                         "due_date": null,
-                         "priority": "low",
-                         "interval": {
-                              "interval": "monthly",
-                              "prev_date": "2025/01/13",
-                              "status": "pending"
-                         },
-                         "goal": "misc"
-                    },
-                    {
-                         "title": "test2",
-                         "details": "",
-                         "due_date": null,
-                         "priority": "low",
-                         "interval": {
-                              "interval": "every time",
-                              "prev_date": "2025/01/12",
-                              "status": "pending"
-                         },
-                         "goal": "misc"
-                    },
-                    {
-                         "title": "Finish config",
-                         "details": "ovb",
-                         "due_date": "2024/01/14",
-                         "priority": "high",
-                         "interval": {
-                              "interval": null,
-                              "prev_date": "2025/01/13",
-                              "status": "up"
-                         },
-                         "goal": "misc"
-                    }
-               ],
                "details": "tasks that have no goal"
           },
           "school": {
-               "tasks": [
-                    {
-                         "title": "title",
-                         "details": "details",
-                         "due_date": null,
-                         "priority": "low",
-                         "interval": {
-                              "interval": "daily",
-                              "prev_date": "2025/01/12",
-                              "status": "pending"
-                         },
-                         "goal": "school"
-                    }
-               ],
                "details": "Tasks related to school"
           }
      },
      "user_goal_names": [
           "school"
      ],
-     "name": "Connor",
-     "upcoming_tasks": [],
-     "tasks_done": 7
+     "name": "Connor ",
+     "tasks_done": 1
 }
