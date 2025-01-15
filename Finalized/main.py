@@ -3,7 +3,7 @@ import argparse
 import toml
 
 colors = l.colors
-display_settings = l.display_settings
+display_settingszz = l.display_settings
 def main():
 
     parser = argparse.ArgumentParser(prog='Finalized',description='Todo list')

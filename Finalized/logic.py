@@ -260,7 +260,7 @@ def update_pending_tasks():
             next_occurrence = get_next_monthly_occurrence(start_date=task['interval']['prev_date'])
         if next_occurrence and check_occurrences(next_occurrence):
             task['interval']['status'] = 'up'  
-            task['interval']['prev_date'] = CURRENT_DATE.strftime('%Y/%m/%d at %h:%m')
+            task['interval']['prev_date'] = CURRENT_DATE.strftime('%Y/%m/%d')
     save_data(save)
                 
 # ===========================
