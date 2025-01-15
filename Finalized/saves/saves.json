@@ -1,29 +1,36 @@
 {
      "tasks": [
           {
-               "title": "finish ap csp B project",
-               "details": "finish the creating your own custom image filter project",
-               "due_date": "2025/01/15",
+               "title": "add advanced time option ",
+               "details": "none",
+               "due_date": "2024/01/16",
                "priority": "high",
                "interval": {
                     "interval": null,
-                    "prev_date": "2025/01/13",
+                    "prev_date": "2025/01/15",
                     "status": "up"
                },
-               "goal": "school"
+               "goal": "programming"
           }
      ],
      "goals": {
+          "all": {
+               "details": "every task"
+          },
           "misc": {
                "details": "tasks that have no goal"
           },
           "school": {
                "details": "Tasks related to school"
+          },
+          "programming": {
+               "details": "Tasks related to programming"
           }
      },
      "user_goal_names": [
-          "school"
+          "school",
+          "programming"
      ],
-     "name": "Connor ",
-     "tasks_done": 1
+     "name": "Archimedes",
+     "tasks_done": 0
 }

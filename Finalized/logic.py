@@ -202,6 +202,10 @@ def init_saves():
     user_goals = user_goals.lower().split()
 
     goals = {  
+        'all': {
+                    'details': "every task"
+                },
+
         'misc': {
             'details': "tasks that have no goal"
         }
@@ -241,7 +245,7 @@ def format_details(detail):
 def get_time_tag(task):
     if task['due_date'] == None:
         return f'(Interval: {task['interval']['interval'].upper()})'
-    return f'(DUE: {task['due_date']})'
+    return f'(DUE: {task['due_date'][5:-1] at {task['']}})'
 
 def update_pending_tasks():
     save = load_save()
@@ -256,7 +260,7 @@ def update_pending_tasks():
             next_occurrence = get_next_monthly_occurrence(start_date=task['interval']['prev_date'])
         if next_occurrence and check_occurrences(next_occurrence):
             task['interval']['status'] = 'up'  
-            task['interval']['prev_date'] = CURRENT_DATE.strftime('%Y/%m/%d')
+            task['interval']['prev_date'] = CURRENT_DATE.strftime('%Y/%m/%d at %h:%m')
     save_data(save)
                 
 # ===========================
